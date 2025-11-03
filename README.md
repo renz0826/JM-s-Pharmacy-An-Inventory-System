@@ -1,4 +1,4 @@
-# JM's-Pharmacy-An-Inventory-System 🚑💊
+# JM's Pharmacy An Inventory System 🚑💊
 A lightweight Java console application for small pharmacies. Two roles: USER (customer) and ADMIN (inventory manager). Stores data in simple files, so it runs anywhere with a JDK.
 
 ## Key Features ✨
