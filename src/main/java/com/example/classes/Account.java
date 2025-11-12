@@ -1,3 +1,5 @@
+package com.example.classes;
+
 import java.util.Scanner;
 
 // Base class account
