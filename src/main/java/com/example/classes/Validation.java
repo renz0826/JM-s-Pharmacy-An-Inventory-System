@@ -1,17 +1,16 @@
 package com.example.classes;
 
-import java.util.Scanner;
 import java.util.Set;
 
 class Validation {
 
     // Method for retrieving and validating inputs
-    public static int getValidChoice(Scanner sc, Set<Integer> validChoices){
+    public static int getValidChoice(Set<Integer> validChoices){
         int choice;
 
             while (true) { 
                 System.out.print("\nEnter Choice >> ");
-                String input = sc.nextLine();
+                String input = Input.readString();
 
                 // Validate inputs
                 try {

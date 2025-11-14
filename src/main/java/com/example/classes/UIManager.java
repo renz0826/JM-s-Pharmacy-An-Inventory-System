@@ -1,6 +1,5 @@
 package com.example.classes;
 
-import java.util.Scanner;
 import java.util.Set;
 
 // UI class for design
@@ -8,8 +7,6 @@ class UIManager extends Validation {
     
     // Login choice method
     public static void displayLoginChoice(){
-        Scanner sc = new Scanner(System.in);
-
         String menu = """
                 ===============================================
                 |           + Select Account Type +           |
@@ -29,7 +26,7 @@ class UIManager extends Validation {
         System.out.print(menu);
 
         // Valid choices
-        int choice = getValidChoice(sc, Set.of(3, 2, 1, 0));
+        int choice = getValidChoice(Set.of(3, 2, 1, 0));
 
         Account c;
         
@@ -48,13 +45,9 @@ class UIManager extends Validation {
                 System.out.println("\nExiting...");
                 break;
         }
-
-        sc.close();
     }
 
     public static void displayCustomerMenu(){
-        Scanner sc = new Scanner(System.in);
-
         String menu = """
                 =============================================
                 |             + Customer Menu +             |
@@ -75,7 +68,7 @@ class UIManager extends Validation {
         System.out.print(menu);
 
         // Valid choices
-        int choice = getValidChoice(sc, Set.of(4, 3, 2, 1, 0));
+        int choice = getValidChoice(Set.of(4, 3, 2, 1, 0));
 
         Account c;
         
@@ -96,13 +89,9 @@ class UIManager extends Validation {
                 System.out.println("\nExiting...");
                 break;
         }
-        
-        sc.close();
     }
 
     public static void displayPharmacyMenu(){
-        Scanner sc = new Scanner(System.in);
-
         String menu = """
                 =============================================
                 |             + Pharmacy Menu +             |
@@ -124,7 +113,7 @@ class UIManager extends Validation {
         System.out.print(menu);
 
         // Valid choices
-        int choice = getValidChoice(sc, Set.of(4, 3, 2, 1, 0));
+        int choice = getValidChoice(Set.of(4, 3, 2, 1, 0));
         Pharmacy p = new Pharmacy();
         switch (choice){
             case 1 -> p.addMedicine();
@@ -136,14 +125,10 @@ class UIManager extends Validation {
                 System.out.println("\nExiting...");
                 break;
             }
-        }
-        
-        sc.close();
+        };
     }
 
     public static void displayAdminMenu(){
-        Scanner sc = new Scanner(System.in);
-
         String menu = """
                 ==============================================
                 |               + Admin Menu +               |
@@ -168,7 +153,7 @@ class UIManager extends Validation {
         System.out.print(menu);
 
         // Valid choices
-        int choice = getValidChoice(sc, Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
+        int choice = getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
 
         Account c;
         
@@ -189,9 +174,5 @@ class UIManager extends Validation {
                 System.out.println("\nExiting...");
                 break;
         }
-        
-        sc.close();
     }
-    
-    
 }
