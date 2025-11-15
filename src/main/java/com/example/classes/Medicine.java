@@ -1,17 +1,15 @@
 package com.example.classes;
 
-import java.time.LocalDateTime;
-
 class Medicine {
     // Fields
     private String name;
     private String brand;
     private String purpose;
-    private LocalDateTime expirationDate;
+    private String expirationDate;
     private int amount;
     private double price;
 
-    public Medicine(String name, String brand, String purpose, LocalDateTime expirationDate, int amount, double price) {
+    public Medicine(String name, String brand, String purpose, String expirationDate, int amount, double price) {
         this.name = name;
         this.brand = brand;
         this.purpose = purpose;
@@ -29,7 +27,7 @@ class Medicine {
     public String getPurpose() {
         return purpose;
     }
-    public LocalDateTime getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
     public int getAmount() {
