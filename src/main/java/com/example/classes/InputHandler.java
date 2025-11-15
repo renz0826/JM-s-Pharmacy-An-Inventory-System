@@ -136,20 +136,20 @@ public class InputHandler {
     }
 
     /**
-     * Reads a date from the user in {@code dd/MM/yyyy} format.
+     * Reads a date from the user in {@code d/MM/yyyy} format.
      * 
      * Prompts the user with the given message and repeatedly reads input until
-     * a valid date in {@code dd/MM/yyyy} format is provided. This method uses 
+     * a valid date in {@code d/M/yyyy} format is provided. This method uses 
      * {@link #readNonEmptyLine(String)} to handle input collection and trimming.
      * 
      * @param prompt the message displayed to the user before reading input
-     * @return a date string in {@code dd/MM/yyyy} format entered by the user
+     * @return a date string in {@code d/M/yyyy} format entered by the user
      * @see #readNonEmptyLine(String)
      */
     public static String readDate(String prompt) {
         String input;
         LocalDate date;
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("d/M/yyyy");
 
         while (true) {
             input = readNonEmptyLine(prompt);
@@ -158,7 +158,7 @@ public class InputHandler {
                 date = LocalDate.parse(input, format);
                 return date.format(format);
             } catch (DateTimeParseException e) {
-                System.out.println("[ERROR]: Incorrect date format. Use dd/MM/yyyy");
+                System.err.println("[ERROR]: Incorrect date format. Use d/M/yyyy");
             }
         }
     }
