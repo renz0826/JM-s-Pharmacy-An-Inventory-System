@@ -1,25 +1,21 @@
 package com.example.classes;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-public class AccountDatabaseHandler {
+public class Database {
     private static ObjectMapper objectMapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            
 
     // Function to safely write changes to file
     public static void saveToFile(Path temporary, Path permanent, Account data) {
@@ -42,7 +38,6 @@ public class AccountDatabaseHandler {
             System.err.println("[ERROR]: A file operation error has occured:\n" + e);
         }
     }
-    
     // Getter
     public static ObjectMapper getObjectMapper() {
         return objectMapper;
