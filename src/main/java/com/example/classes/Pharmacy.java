@@ -1,20 +1,11 @@
 package com.example.classes;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 public class Pharmacy extends Account {
     // Necessary initializations
-    private static ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); // Pretty print json in file
     private List<Medicine> medicines = new ArrayList<>();
 
     // TODO: these are just test files, make them more adaptable later
@@ -36,7 +27,7 @@ public class Pharmacy extends Account {
         // Save sanitized inputs to database
         Medicine newMedicine = new Medicine(name, brand, purpose, expirationDate, amount, price);
         medicines.add(newMedicine);
-        AccountDatabaseHandler.saveToFile(temporaryFile, permanentFile, this);        
+        Database.saveToFile(temporaryFile, permanentFile, this);        
     }
 
     public void searchMedicine() {}
