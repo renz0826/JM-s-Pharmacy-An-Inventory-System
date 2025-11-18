@@ -7,5 +7,6 @@ public class Main {
 
         //UIManager.displayLoginChoice();
         //UIManager.displayAdminMenu();
+        Pharmacy admin = AuthService.logInPharmacy("jmpharmacy", "jm123");
     }
 }
