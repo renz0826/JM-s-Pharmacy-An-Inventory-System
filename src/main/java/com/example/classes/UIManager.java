@@ -1,10 +1,15 @@
 package com.example.classes;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import de.vandermeer.asciitable.AsciiTable;
 
 // UI class for design
 class UIManager {
-    
+    private static AsciiTable asciiTable;
+
     // Login choice method
     public static void displayLoginChoice(){
         String menu = """
@@ -93,8 +98,6 @@ class UIManager {
 
         // Valid choices
         int choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0));
-
-        Account c;
         
         switch (choice){
             case 1:
@@ -121,7 +124,7 @@ class UIManager {
                 =============================================
                 |                                           |
                 |   1. Add Medicine                         |
-                |   2. Search Medicine                      |
+                |   2. Show List of Medicines               |
                 |   3. Update Medicine Amount               |
                 |   4. Update Medicine Price                |
                 |   5. Delete Medicine                      |
@@ -151,7 +154,10 @@ class UIManager {
                         choice = InputHandler.getValidChoice(Set.of(1, 2));
                     } while (choice != 2);
                 }
-                case 2 -> pharmacy.searchMedicine();
+                case 2 -> {
+                    displayData(pharmacy.getMedicines());
+                    pharmacy.searchMedicine();
+                }
                 case 3 -> pharmacy.updateMedicineAmount();
                 case 4 -> pharmacy.updateMedicinePrice(); 
                 case 5 -> pharmacy.deleteMedicine();
@@ -189,8 +195,6 @@ class UIManager {
 
         // Valid choices
         int choice = InputHandler.getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
-
-        Account c;
         
         switch (choice){
             case 1:
@@ -208,4 +212,27 @@ class UIManager {
                 break;
         }
     }
+
+    public static void displayData(Account account) {};
+    public static void displayData(List<Medicine> medicines) {
+        asciiTable = new AsciiTable();
+        
+        // Header
+        asciiTable.addRule();
+        asciiTable.addRow("Name", "Price", "Amount", "Brand", "Expires At", "Purpose");
+        asciiTable.addRule();
+
+        // Insert data
+        for (Medicine medicine : medicines) {
+            asciiTable.addRow(
+                medicine.getName(), medicine.getPrice(), medicine.getAmount(),
+                medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+            );
+            asciiTable.addRule();
+        }
+
+        // Render and print table to console
+        String rend = asciiTable.render();
+        System.out.println(rend);
+    };
 }
