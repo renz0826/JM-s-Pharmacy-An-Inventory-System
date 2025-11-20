@@ -1,3 +1,15 @@
 package com.example.classes;
 
-public class Admin extends Account {}
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Admin extends Account {
+    
+    @JsonCreator
+    Admin(
+        @JsonProperty("name") String name,
+        @JsonProperty("username") String username,
+        @JsonProperty("password") String password) {
+        super(name, username, password);
+    }
+}

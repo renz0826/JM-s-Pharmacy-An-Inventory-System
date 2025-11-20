@@ -22,32 +22,56 @@ class UIManager {
 
                 Please Select an Account Type.
                 """;
+        Account authenticated = null;
+        AccountType accountType;
 
-        System.out.print(menu);
+        // Login loop
+        while (true) {
+            // display menu
+            System.out.print(menu);
+            
+            // ask user which account to login
+            accountType = switch(InputHandler.getValidChoice(Set.of(3, 2, 1, 0))) {
+                case 1 -> AccountType.CUSTOMER;
+                case 2 -> AccountType.PHARMACY;
+                case 3 -> AccountType.ADMIN;
+                case 0 -> {
+                    System.out.println("\nExiting...");
+                    yield null;
+                }
+                default -> null;
+            };
 
-        // Valid choices
-        int choice = InputHandler.getValidChoice(Set.of(3, 2, 1, 0));
+            if (accountType == null) break;
 
-        Account c;
-        
-        switch (choice){
-            case 1:
-                c = new Customer(); //TODO: customer must not be parameterized
-                c.login();
-                break;
-            case 2:
-                //s = new Customer("a", "b");
-                break;
-            case 3:
-                //s = new Customer("a", "b");
-                break;
-            case 0:
-                System.out.println("\nExiting...");
-                break;
+            // prompt user credentials
+            while (authenticated == null) {
+                System.out.println("====== Login System ======");
+                String username = InputHandler.readNonEmptyLine("Enter username: ");
+                String password = InputHandler.readNonEmptyLine("Enter password: ");
+                
+                // verify credentials
+                authenticated = switch (accountType) {
+                    case CUSTOMER -> AuthService.logInCustomer(username, password);
+                    case PHARMACY -> AuthService.logInPharmacy(username, password);
+                    case ADMIN -> AuthService.logInAdmin(username, password);
+                };
+
+                if (authenticated == null) {
+                    System.out.println("Login failed. Enter anything to try again.");
+                    String input = InputHandler.readNonEmptyLine("Enter 'q' to exit: ");
+                    if (input.equals("q")) break;
+                }
+            }
+
+            // Call respective Account menu
+            if (authenticated instanceof Customer) displayCustomerMenu((Customer) authenticated);
+            else if (authenticated instanceof Pharmacy) displayPharmacyMenu((Pharmacy) authenticated);
+            else if (authenticated instanceof Admin) displayAdminMenu((Admin) authenticated);
         }
     }
 
-    public static void displayCustomerMenu(){
+    public static void displayCustomerMenu(Customer customer){
         String menu = """
                 =============================================
                 |             + Customer Menu +             |
@@ -74,8 +98,6 @@ class UIManager {
         
         switch (choice){
             case 1:
-                c = new Customer(); //TODO: customer must not be parameterized
-                c.login();
                 break;
             case 2:
                 //s = new Customer("a", "b");
@@ -91,7 +113,8 @@ class UIManager {
         }
     }
 
-    public static void displayPharmacyMenu(){
+    public static void displayPharmacyMenu(Pharmacy pharmacy){
+        // Menu display
         String menu = """
                 =============================================
                 |             + Pharmacy Menu +             |
@@ -110,25 +133,37 @@ class UIManager {
                 Please Choose an Option.
                 """;
 
-        System.out.print(menu);
+        // Initialize necessary variables
+        int choice;
+        boolean running = true;
 
-        // Valid choices
-        int choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0));
-        Pharmacy p = new Pharmacy();
-        switch (choice){
-            case 1 -> p.addMedicine();
-            case 2 -> p.searchMedicine();
-            case 3 -> p.updateMedicineAmount();
-            case 4 -> p.updateMedicinePrice(); 
-            case 5 -> p.deleteMedicine();
-            case 0 -> {
-                System.out.println("\nExiting...");
-                break;
-            }
-        };
+        // Get user choice
+        do {
+            System.out.print(menu);
+
+            switch (choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0))){
+                case 1 -> {
+                    do {
+                        pharmacy.addMedicine();
+                        System.out.println("1. Add another medicine");
+                        System.out.println("2. Back to menu");
+                        System.out.print("Enter option: ");
+                        choice = InputHandler.getValidChoice(Set.of(1, 2));
+                    } while (choice != 2);
+                }
+                case 2 -> pharmacy.searchMedicine();
+                case 3 -> pharmacy.updateMedicineAmount();
+                case 4 -> pharmacy.updateMedicinePrice(); 
+                case 5 -> pharmacy.deleteMedicine();
+                case 0 -> {
+                    System.out.println("\nExiting...");
+                    running = false;
+                }
+            };
+        } while (running);
     }
 
-    public static void displayAdminMenu(){
+    public static void displayAdminMenu(Admin admin){
         String menu = """
                 ==============================================
                 |               + Admin Menu +               |
@@ -159,8 +194,6 @@ class UIManager {
         
         switch (choice){
             case 1:
-                c = new Customer(); //TODO: customer must not be parameterized
-                c.login();
                 break;
             case 2:
                 //s = new Customer("a", "b");

@@ -7,12 +7,16 @@ public class Account{
     final protected int MAX_PASSWORD_SIZE = 128;
     final protected static String ROOT_DIRECTORY = "accounts";
 
-    protected String username;
     protected String name;
+    protected String username;
     protected String password;
 
     // Base class constructor
-    protected Account(){}
+    protected Account(String name, String username, String password) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
 
     // Login method
     public void login() {

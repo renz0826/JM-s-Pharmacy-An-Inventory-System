@@ -1,5 +1,8 @@
 package com.example.classes;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 class Medicine {
     // Fields
     private String name;
@@ -9,7 +12,15 @@ class Medicine {
     private int amount;
     private double price;
 
-    public Medicine(String name, String brand, String purpose, String expirationDate, int amount, double price) {
+    @JsonCreator
+    Medicine(
+        @JsonProperty("name") String name, 
+        @JsonProperty("brand") String brand, 
+        @JsonProperty("purpose") String purpose, 
+        @JsonProperty("expirationDate") String expirationDate, 
+        @JsonProperty("amount") int amount,
+        @JsonProperty("price") double price
+    ) {
         this.name = name;
         this.brand = brand;
         this.purpose = purpose;
@@ -17,6 +28,7 @@ class Medicine {
         setAmount(amount);
         setPrice(price);
     }
+
     // Getters
     public String getName() {
         return name;
