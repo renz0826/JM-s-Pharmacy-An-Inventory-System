@@ -1,82 +1,111 @@
 package com.example.classes;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import de.vandermeer.asciitable.AT_Cell;
+import de.vandermeer.asciitable.AT_Row;
 import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 
 // UI class for design
 class UIManager {
+
     private static AsciiTable asciiTable;
 
     // Login choice method
-    public static void displayLoginChoice(){
-        String menu = """
-                ===============================================
-                |           + Select Account Type +           |
-                ===============================================
-                |                                             |
-                |   1. Customer                               |
-                |   2. Pharmacy                               |
-                |   3. Admin                                  |
-                |                                             |
-                |   0. Exit                                   |
-                |                                             |
-                ===============================================
-
-                Please Select an Account Type.
-                """;
-        Account authenticated = null;
-        AccountType accountType;
+    public static void displayLoginChoice() {
+        asciiTable = new AsciiTable();
 
         // Login loop
         while (true) {
             // display menu
-            System.out.print(menu);
-            
+            // Header
+            asciiTable.addRule();
+            asciiTable.addRow("+ Select Account Type +");
+            asciiTable.addRule();
+            asciiTable.setTextAlignment(TextAlignment.CENTER);
+
+            String[] rows = {
+                "1. Customer",
+                "2. Pharmacy",
+                "3. Admin",};
+
+            for (String label : rows) {
+                AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
+                cell.getContext().setPadding(1).setPaddingLeft(7);
+                cell.getContext().setTextAlignment(TextAlignment.LEFT);
+            }
+
+            asciiTable.addRule();
+            AT_Row row = asciiTable.addRow("0. Exit");
+            row.setPadding(1).setPaddingLeft(7);
+            asciiTable.addRule();
+
+            // Render and print
+            String rend = asciiTable.render();
+            System.out.println(rend);
+
+            Account authenticated = null;
+            AccountType accountType;
+
             // ask user which account to login
-            accountType = switch(InputHandler.getValidChoice(Set.of(3, 2, 1, 0))) {
-                case 1 -> AccountType.CUSTOMER;
-                case 2 -> AccountType.PHARMACY;
-                case 3 -> AccountType.ADMIN;
+            accountType = switch (InputHandler.getValidChoice(Set.of(3, 2, 1, 0))) {
+                case 1 ->
+                    AccountType.CUSTOMER;
+                case 2 ->
+                    AccountType.PHARMACY;
+                case 3 ->
+                    AccountType.ADMIN;
                 case 0 -> {
                     System.out.println("\nExiting...");
                     yield null;
                 }
-                default -> null;
+                default ->
+                    null;
             };
 
-            if (accountType == null) break;
+            if (accountType == null) {
+                break;
+            }
 
             // prompt user credentials
             while (authenticated == null) {
                 System.out.println("====== Login System ======");
                 String username = InputHandler.readNonEmptyLine("Enter username: ");
                 String password = InputHandler.readNonEmptyLine("Enter password: ");
-                
+
                 // verify credentials
                 authenticated = switch (accountType) {
-                    case CUSTOMER -> AuthService.logInCustomer(username, password);
-                    case PHARMACY -> AuthService.logInPharmacy(username, password);
-                    case ADMIN -> AuthService.logInAdmin(username, password);
+                    case CUSTOMER ->
+                        AuthService.logInCustomer(username, password);
+                    case PHARMACY ->
+                        AuthService.logInPharmacy(username, password);
+                    case ADMIN ->
+                        AuthService.logInAdmin(username, password);
                 };
 
                 if (authenticated == null) {
                     System.out.println("Login failed. Enter anything to try again.");
                     String input = InputHandler.readNonEmptyLine("Enter 'q' to exit: ");
-                    if (input.equals("q")) break;
+                    if (input.equals("q")) {
+                        break;
+                    }
                 }
             }
 
             // Call respective Account menu
-            if (authenticated instanceof Customer) displayCustomerMenu((Customer) authenticated);
-            else if (authenticated instanceof Pharmacy) displayPharmacyMenu((Pharmacy) authenticated);
-            else if (authenticated instanceof Admin) displayAdminMenu((Admin) authenticated);
+            if (authenticated instanceof Customer) {
+                displayCustomerMenu((Customer) authenticated);
+            } else if (authenticated instanceof Pharmacy) {
+                displayPharmacyMenu((Pharmacy) authenticated);
+            } else if (authenticated instanceof Admin) {
+                displayAdminMenu((Admin) authenticated);
+            }
         }
     }
 
-    public static void displayCustomerMenu(Customer customer){
+    public static void displayCustomerMenu(Customer customer) {
         String menu = """
                 =============================================
                 |             + Customer Menu +             |
@@ -98,8 +127,8 @@ class UIManager {
 
         // Valid choices
         int choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0));
-        
-        switch (choice){
+
+        switch (choice) {
             case 1:
                 break;
             case 2:
@@ -116,7 +145,7 @@ class UIManager {
         }
     }
 
-    public static void displayPharmacyMenu(Pharmacy pharmacy){
+    public static void displayPharmacyMenu(Pharmacy pharmacy) {
         // Menu display
         String menu = """
                 =============================================
@@ -144,7 +173,7 @@ class UIManager {
         do {
             System.out.print(menu);
 
-            switch (choice = InputHandler.getValidChoice(Set.of(5, 4, 3, 2, 1, 0))){
+            switch (choice = InputHandler.getValidChoice(Set.of(5, 4, 3, 2, 1, 0))) {
                 case 1 -> {
                     do {
                         pharmacy.addMedicine();
@@ -158,9 +187,12 @@ class UIManager {
                     displayData(pharmacy.getMedicines());
                     pharmacy.searchMedicine();
                 }
-                case 3 -> pharmacy.updateMedicineAmount();
-                case 4 -> pharmacy.updateMedicinePrice(); 
-                case 5 -> pharmacy.deleteMedicine();
+                case 3 ->
+                    pharmacy.updateMedicineAmount();
+                case 4 ->
+                    pharmacy.updateMedicinePrice();
+                case 5 ->
+                    pharmacy.deleteMedicine();
                 case 0 -> {
                     System.out.println("\nExiting...");
                     running = false;
@@ -169,7 +201,7 @@ class UIManager {
         } while (running);
     }
 
-    public static void displayAdminMenu(Admin admin){
+    public static void displayAdminMenu(Admin admin) {
         String menu = """
                 ==============================================
                 |               + Admin Menu +               |
@@ -195,8 +227,8 @@ class UIManager {
 
         // Valid choices
         int choice = InputHandler.getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
-        
-        switch (choice){
+
+        switch (choice) {
             case 1:
                 break;
             case 2:
@@ -213,10 +245,13 @@ class UIManager {
         }
     }
 
-    public static void displayData(Account account) {};
+    public static void displayData(Account account) {
+    }
+
+    ;
     public static void displayData(List<Medicine> medicines) {
         asciiTable = new AsciiTable();
-        
+
         // Header
         asciiTable.addRule();
         asciiTable.addRow("Name", "Price", "Amount", "Brand", "Expires At", "Purpose");
@@ -225,8 +260,8 @@ class UIManager {
         // Insert data
         for (Medicine medicine : medicines) {
             asciiTable.addRow(
-                medicine.getName(), medicine.getPrice(), medicine.getAmount(),
-                medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+                    medicine.getName(), medicine.getPrice(), medicine.getAmount(),
+                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
             );
             asciiTable.addRule();
         }
@@ -234,5 +269,6 @@ class UIManager {
         // Render and print table to console
         String rend = asciiTable.render();
         System.out.println(rend);
-    };
+    }
+;
 }
