@@ -73,6 +73,7 @@ class UIManager {
             if (authenticated instanceof Customer) displayCustomerMenu((Customer) authenticated);
             else if (authenticated instanceof Pharmacy) displayPharmacyMenu((Pharmacy) authenticated);
             else if (authenticated instanceof Admin) displayAdminMenu((Admin) authenticated);
+            authenticated = null;
         }
     }
 
