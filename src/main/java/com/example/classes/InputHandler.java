@@ -8,13 +8,14 @@ import java.util.Set;
 
 // This class handles user input and input validation
 public class InputHandler {
+
     private static final Scanner SCAN = new Scanner(System.in);
 
     // Method for retrieving and validating inputs
-    public static int getValidChoice(Set<Integer> validChoices){
+    public static int getValidChoice(Set<Integer> validChoices) {
         int choice;
 
-        while (true) { 
+        while (true) {
             System.out.print("\nEnter Choice >> ");
             String input = SCAN.nextLine();
 
@@ -23,39 +24,39 @@ public class InputHandler {
                 choice = Integer.parseInt(input); // Convert strings to int
 
                 // Checks if integer is one of the allowed choices
-                if (validChoices.contains(choice)){
+                if (validChoices.contains(choice)) {
                     // Input is valid
                     return choice;
                 } else {
                     // Input is numeric but not allowed
-                    System.out.println("\nInvalid choice. \nAllowed: " + validChoices + "\n");
+                    System.out.println("\nInvalid choice. \nAllowed: " + validChoices + "");
                 }
             } catch (NumberFormatException e) {
                 // If input is not numeric
-                System.out.println("\nInvalid input. \nPlease enter an integer.\n");
+                System.out.println("\nInvalid input. \nPlease enter an integer.");
             }
         }
     }
 
     /**
      * Reads a non-empty line of input from the user.
-     * 
+     *
      * Prompts the user with the given message and repeatedly reads input until
-     * a non-empty string is provided. Input is trimmed of leading and trailing whitespace
-     * before being returned.
-     * 
+     * a non-empty string is provided. Input is trimmed of leading and trailing
+     * whitespace before being returned.
+     *
      * @param prompt the message displayed to the user before reading input
      * @return a trimmed, non-empty string entered by the user
      */
     public static String readNonEmptyLine(String prompt) {
         String input;
-        
+
         while (true) {
             System.out.print(prompt);
             input = SCAN.nextLine();
-        
+
             if (input.isEmpty()) {
-                System.err.println("[ERROR]: Input cannot be empty");    
+                System.err.println("[ERROR]: Input cannot be empty");
                 continue;
             }
             input = input.trim();
@@ -65,12 +66,13 @@ public class InputHandler {
 
     /**
      * Reads a non-negative integer from the user.
-     * 
+     *
      * Prompts the user with the given message and repeatedly reads input until
-     * a valid non-negative integer is provided. Input is validated to ensure it is
-     * a valid integer and is not negative. This method uses {@link #readNonEmptyLine(String)}
-     * to handle input collection and trimming.
-     * 
+     * a valid non-negative integer is provided. Input is validated to ensure it
+     * is a valid integer and is not negative. This method uses
+     * {@link #readNonEmptyLine(String)} to handle input collection and
+     * trimming.
+     *
      * @param prompt the message displayed to the user before reading input
      * @return a non-negative integer entered by the user
      * @see #readNonEmptyLine(String)
@@ -101,12 +103,13 @@ public class InputHandler {
 
     /**
      * Reads a non-negative double from the user.
-     * 
+     *
      * Prompts the user with the given message and repeatedly reads input until
-     * a valid non-negative double is provided. Input is validated to ensure it is
-     * a valid double and is not negative. This method uses {@link #readNonEmptyLine(String)}
-     * to handle input collection and trimming.
-     * 
+     * a valid non-negative double is provided. Input is validated to ensure it
+     * is a valid double and is not negative. This method uses
+     * {@link #readNonEmptyLine(String)} to handle input collection and
+     * trimming.
+     *
      * @param prompt the message displayed to the user before reading input
      * @return a non-negative double entered by the user
      * @see #readNonEmptyLine(String)
@@ -137,11 +140,12 @@ public class InputHandler {
 
     /**
      * Reads a date from the user in {@code d/MM/yyyy} format.
-     * 
+     *
      * Prompts the user with the given message and repeatedly reads input until
-     * a valid date in {@code d/M/yyyy} format is provided. This method uses 
-     * {@link #readNonEmptyLine(String)} to handle input collection and trimming.
-     * 
+     * a valid date in {@code d/M/yyyy} format is provided. This method uses
+     * {@link #readNonEmptyLine(String)} to handle input collection and
+     * trimming.
+     *
      * @param prompt the message displayed to the user before reading input
      * @return a date string in {@code d/M/yyyy} format entered by the user
      * @see #readNonEmptyLine(String)
@@ -166,5 +170,5 @@ public class InputHandler {
     // Reminder: Call this on the very last line of the "main" program
     public static void close() {
         SCAN.close();
-    }  
+    }
 }
