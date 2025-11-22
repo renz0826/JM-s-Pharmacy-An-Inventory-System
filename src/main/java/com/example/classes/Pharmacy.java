@@ -39,7 +39,25 @@ public class Pharmacy extends Account {
         Database.save(this);
     }
 
-    public void searchMedicine() {}
+    /**
+     * Method to search for medicines that contains a matching substring from targetName 
+     * @param targetName
+     * @return a list of medicines whose names contains the substring or null if none
+     */
+    public List<Medicine> searchMedicine(String targetName) {
+        List<Medicine> matched = new ArrayList<>();
+
+        // search all names containing target string
+        for (Medicine medicine : medicines) {
+            if (medicine.getName().toLowerCase().contains(targetName.toLowerCase())) {
+                matched.add(medicine);
+            }
+        }
+
+        if (matched.isEmpty()) return null;
+        return matched;
+    }
+
     public void updateMedicineAmount() {}
     public void updateMedicinePrice() {}
     public void deleteMedicine() {}
