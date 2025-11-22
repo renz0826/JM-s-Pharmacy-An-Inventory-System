@@ -64,7 +64,7 @@ public class Pharmacy extends Account {
         int result = medicine.getAmount() + amount;
         if (result < 0) { medicine.setAmount(0); } 
         else { medicine.setAmount(result); }
-        Database.saveToFile(temporaryFile, permanentFile, this);
+        Database.save(this);
     }
 
     public void updateMedicinePrice() {}
