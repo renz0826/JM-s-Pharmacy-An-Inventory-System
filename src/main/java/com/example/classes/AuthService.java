@@ -13,7 +13,7 @@ public class AuthService {
     private static List<Path> clientFiles;
 
     public static Admin logInAdmin(String username, String password) {
-        Admin admin = Database.loadAdmin(adminFilePath);
+        Admin admin = Database.load(adminFilePath, Admin.class);
         
         if (admin == null) {
             System.out.println("Error occured");
@@ -31,11 +31,10 @@ public class AuthService {
 
     public static Pharmacy logInPharmacy(String username, String password) {
         clientFiles = Database.getJsonFilePaths(pharmaciesDatabasePath);
-        Pharmacy pharmacy;
 
         for (Path path : clientFiles) {
             if (Files.isRegularFile(path)) {
-                pharmacy = Database.loadPharmacy(path);
+                Pharmacy pharmacy = Database.load(path, Pharmacy.class);
                 if (pharmacy == null) {
                     System.out.println("Error occured");
                     return null;
@@ -58,7 +57,7 @@ public class AuthService {
         Customer customer;
         for (Path path : clientFiles) {
             if (Files.isRegularFile(path)) {
-                customer = Database.loadCustomer(path);
+                customer = Database.load(path, Customer.class);
                 if (customer == null) {
                     System.out.println("Error occured");
                     return null;

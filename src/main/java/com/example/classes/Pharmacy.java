@@ -8,13 +8,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Pharmacy extends Account {
-
     // Necessary initializations
     private List<Medicine> medicines;
-
-    // TODO: these are just test files, make them more adaptable later
-    private Path permanentFile = Path.of(Account.ROOT_DIRECTORY, "pharmacies", "JmPharmacy.json");
-    private Path temporaryFile = Path.of(permanentFile.toString() + ".tmp"); // temporary filepath
 
     @JsonCreator
     Pharmacy(
@@ -41,7 +36,7 @@ public class Pharmacy extends Account {
         // Save sanitized inputs to database
         Medicine newMedicine = new Medicine(name, brand, purpose, expirationDate, amount, price);
         medicines.add(newMedicine);
-        Database.saveToFile(temporaryFile, permanentFile, this);        
+        Database.save(this);
     }
 
     public void searchMedicine() {}
