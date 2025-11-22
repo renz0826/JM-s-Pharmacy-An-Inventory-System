@@ -157,13 +157,14 @@ class UIManager {
                 }
                 case 2 -> {
                     // display all medicines once
-                    displayData(pharmacy.getMedicines());
+                    List<Medicine> medicines = pharmacy.getMedicines();
+                    displayData(medicines);
 
                     do {
                         System.out.println("Search medicine by name or enter 'q' to exit.");
                         String targetName = InputHandler.readNonEmptyLine("Enter: ");
                         if (targetName.equalsIgnoreCase("q")) break;
-                        List<Medicine> medicines = pharmacy.searchMedicine(targetName);
+                        medicines = pharmacy.searchMedicine(targetName);
 
                         if (medicines == null) {
                             System.out.println("No results found");
@@ -171,9 +172,50 @@ class UIManager {
                             displayData(medicines);
                         }
                     } while (true);
-
                 }
-                case 3 -> pharmacy.updateMedicineAmount();
+                case 3 -> {
+                    List<Medicine> medicines = pharmacy.getMedicines();
+                    // for matching strings representing a double number
+                    String realDoublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)"; 
+
+                    do {
+                        displayData(medicines, true);
+
+                        System.out.println("Instructions: ");
+                        System.out.println("- Select medicine by entering its position number.");
+                        System.out.println("- Search medicine by name or enter 'q' to exit.");
+
+                        String input = InputHandler.readNonEmptyLine("Enter input: ");
+
+                        // exit if quit
+                        if (input.equalsIgnoreCase("q")) break;
+
+                        // do not allow double
+                        if (input.matches(realDoublePattern)) {
+                            System.out.println("[ERROR]: Enter a valid position");
+                            continue;
+                        }
+                        
+                        int pos = 0;
+                        String targetName;
+                        // if number then select medicine, else search
+                        try {
+                            pos = Integer.parseInt(input);
+                            targetName = medicines.get(pos).getName();
+                        } catch (NumberFormatException e) {
+                            List<Medicine> result = pharmacy.searchMedicine(input);
+                            if (result == null) { System.out.println("No results found"); }
+                            else { medicines = result; }
+                            continue;
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.println("[ERROR]: Medicine not found at position " + pos);
+                            continue;
+                        }
+                        
+                        int amount = InputHandler.readInt("Enter amount: ", true);
+                        pharmacy.updateMedicineAmount(targetName, amount);
+                    } while (true);
+                }
                 case 4 -> pharmacy.updateMedicinePrice(); 
                 case 5 -> pharmacy.deleteMedicine();
                 case 0 -> {
@@ -229,25 +271,43 @@ class UIManager {
     }
 
     public static void displayData(Account account) {};
-    public static void displayData(List<Medicine> medicines) {
+
+    public static void displayData(List<Medicine> medicines, boolean indexed) {
         asciiTable = new AsciiTable();
         
         // Header
         asciiTable.addRule();
-        asciiTable.addRow("Name", "Price", "Amount", "Brand", "Expires At", "Purpose");
+        if (!indexed) { asciiTable.addRow("Name", "Price", "Amount", "Brand", "Expires At", "Purpose"); }
+        else { asciiTable.addRow("Position #", "Name", "Price", "Amount", "Brand", "Expires At", "Purpose"); }
         asciiTable.addRule();
 
         // Insert data
-        for (Medicine medicine : medicines) {
-            asciiTable.addRow(
-                medicine.getName(), medicine.getPrice(), medicine.getAmount(),
-                medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
-            );
-            asciiTable.addRule();
+        if (!indexed) {
+            for (Medicine medicine : medicines) {
+                asciiTable.addRow(
+                    medicine.getName(), medicine.getPrice(), medicine.getAmount(),
+                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+                );
+                asciiTable.addRule();
+            }
+        } else {
+            int indexCounter = 0;
+            for (Medicine medicine : medicines) {
+                asciiTable.addRow(
+                    indexCounter, medicine.getName(), medicine.getPrice(), medicine.getAmount(),
+                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+                );
+                asciiTable.addRule();
+                indexCounter++;
+            }
         }
 
         // Render and print table to console
         String rend = asciiTable.render();
         System.out.println(rend);
     };
+
+    public static void displayData(List<Medicine> medicines) {
+        displayData(medicines, false);
+    }
 }
