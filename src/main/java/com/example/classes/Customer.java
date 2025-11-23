@@ -21,4 +21,11 @@ public class Customer extends Account {
         this.medicines = medicines;
         this.funds = funds;
     }
+    
+    public List<Medicine> getMedicines() {
+        return medicines;
+    }
+    public double getFunds() {
+        return funds;
+    }
 }
