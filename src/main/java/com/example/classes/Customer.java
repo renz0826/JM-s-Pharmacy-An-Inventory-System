@@ -56,7 +56,7 @@ public class Customer extends Account {
         System.out.println(rend);
 
         // 1. Load the specific Pharmacy instance
-        Pharmacy targetPharmacy = Database.loadJmPharmacy("JmPharmacy.json");
+        Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
 
         if (targetPharmacy == null) {
             System.out.println("[ERROR]: Failed to load Jm Pharmacy data.");
