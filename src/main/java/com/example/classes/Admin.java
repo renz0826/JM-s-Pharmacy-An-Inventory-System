@@ -60,6 +60,9 @@ public class Admin extends Account {
         String username = InputHandler.readInput("Username: ");
         String password = InputHandler.readInput("Password: ");
 
+        customer.setName(name);
+        customer.setUsername(username);
+        customer.setPassword(password);
 
         Database.save(customer);
     }
