@@ -56,7 +56,7 @@ public class Customer extends Account {
         System.out.println(rend);
 
         // 1. Load the specific Pharmacy instance
-        Pharmacy targetPharmacy = Database.loadJmPharmacy("JmPharmacy.json");
+        Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
 
         if (targetPharmacy == null) {
             System.out.println("[ERROR]: Failed to load Jm Pharmacy data.");
@@ -67,13 +67,13 @@ public class Customer extends Account {
 
         do {
             System.out.println("\n--- Current Balance: $" + this.funds + " ---");
-            UIManager.displayData(currentDisplayList, true);
+            UIManager.displayMedicineTable(currentDisplayList);
 
             System.out.println("Instructions: ");
             System.out.println("- Select medicine by entering its **position number**.");
             System.out.println("- Search medicine by name or enter 'q' to exit.");
 
-            String input = InputHandler.readNonEmptyLine("Enter input: ");
+            String input = InputHandler.readInput("Enter input: ");
 
             if (input.equalsIgnoreCase("q")) {
                 break;
@@ -105,7 +105,7 @@ public class Customer extends Account {
                     }
 
                     System.out.println("Confirm purchase for $" + totalCost + "? (y/n)");
-                    String confirmation = InputHandler.readNonEmptyLine("(y/n): ");
+                    String confirmation = InputHandler.readInput("(y/n): ");
 
                     if (confirmation.equalsIgnoreCase("y")) {
 
@@ -211,7 +211,7 @@ public class Customer extends Account {
         if (myMedicines == null || myMedicines.isEmpty()) {
             System.out.println("No items purchased yet.");
         } else {
-            UIManager.displayData(myMedicines);
+            UIManager.displayMedicineTable(myMedicines);
         }
 
         // Pause
@@ -246,5 +246,16 @@ public class Customer extends Account {
         System.out.println("Funds: " + getFunds());
 
         Database.save(this);
+    }
+
+    // Setters
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
