@@ -17,33 +17,6 @@ public class Account{
         this.password = password;
     }
 
-    // Login method
-    public void login() {
-        System.out.println("====== Login System ======");
-
-        boolean isValid;
-        do {
-            // Ask for username
-            String username = InputHandler.readNonEmptyLine("Enter username: ");
-            
-            // Ask for password
-            String password = InputHandler.readNonEmptyLine("Enter password: ");
-
-            isValid = isCredentialsCorrect(username, password); 
-            if (!isValid) {
-                System.out.println("Credentials are not correct, Try again!");
-            }
-        } while (!isValid);
-    };
-
-    // Logout method
-    public void logout() {};
-
-    // Credential validation method
-    public boolean isCredentialsCorrect(String username, String password) {
-        return this.username.equals(username) && this.password.equals(password);
-    };
-
     // Getters
     public String getUsername() {
         return username;
@@ -53,12 +26,5 @@ public class Account{
     }
     public String getName() {
         return name;
-    }
-
-    // Test method
-    public void details() {
-        System.out.println(name);
-        System.out.println(username);
-        System.out.println(password);
     }
 }
