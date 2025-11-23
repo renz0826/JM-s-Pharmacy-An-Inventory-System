@@ -5,13 +5,10 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class AuthService {
-    private static Path customersDatabasePath = Path.of("accounts", "customers");
-    private static Path pharmaciesDatabasePath = Path.of("accounts", "pharmacies");
-    private static Path adminFilePath = Path.of("accounts", "admin.json");
     private static List<Path> clientFiles;
 
     public static Admin logInAdmin(String username, String password) {
-        Admin admin = Database.load(adminFilePath, Admin.class);
+        Admin admin = Database.load(Database.getAdminFilePath(), Admin.class);
         
         if (admin == null) {
             System.out.println("Error occured");
@@ -28,7 +25,7 @@ public class AuthService {
     }
 
     public static Pharmacy logInPharmacy(String username, String password) {
-        clientFiles = Database.getJsonFilePaths(pharmaciesDatabasePath);
+        clientFiles = Database.getJsonFilePaths(Database.getPharmaciesDatabasePath());
 
         for (Path path : clientFiles) {
             if (Files.isRegularFile(path)) {
@@ -48,7 +45,7 @@ public class AuthService {
     }
 
     public static Customer logInCustomer(String username, String password) {
-        clientFiles = Database.getJsonFilePaths(customersDatabasePath);
+        clientFiles = Database.getJsonFilePaths(Database.getCustomersDatabasePath());
         Customer customer;
         for (Path path : clientFiles) {
             if (Files.isRegularFile(path)) {

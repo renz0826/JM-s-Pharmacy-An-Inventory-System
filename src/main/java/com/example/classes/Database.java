@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Database {
+    private static Path customersDatabasePath = Path.of("accounts", "customers");
+    private static Path pharmaciesDatabasePath = Path.of("accounts", "pharmacies");
+    private static Path adminFilePath = Path.of("accounts", "admin.json");
     private static Map<Account, Path> objectFiles = new HashMap<>();
     private static ObjectMapper objectMapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
@@ -97,8 +100,17 @@ public class Database {
         }
     }
 
-    // Getter
+    // Getters
     public static ObjectMapper getObjectMapper() {
         return objectMapper;
+    }
+    public static Path getCustomersDatabasePath() {
+        return customersDatabasePath;
+    }
+    public static Path getAdminFilePath() {
+        return adminFilePath;
+    }
+    public static Path getPharmaciesDatabasePath() {
+        return pharmaciesDatabasePath;
     }
 }
