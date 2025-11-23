@@ -241,10 +241,9 @@ class UIManager {
                 |                                            |
                 |   1. Register a customer                   |
                 |   2. Show list of customers                |
-                |   3. View pharmacy details                 |
-                |   4. Edit customer credentials             |
-                |   5. Edit pharmacy credentials             |
-                |   6. Delete customer                       |
+                |   3. Edit customer credentials             |
+                |   4. Edit pharmacy credentials             |
+                |   5. Delete customer                       |
                 |                                            |
                 |   0. Logout                                |
                 |                                            |
