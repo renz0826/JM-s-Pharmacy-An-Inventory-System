@@ -1,7 +1,6 @@
 package com.example.classes;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.vandermeer.asciitable.AsciiTable;
@@ -158,7 +157,7 @@ class UIManager {
                 case 2 -> {
                     // display all medicines once
                     List<Medicine> medicines = pharmacy.getMedicines();
-                    displayData(medicines);
+                    displayMedicineTable(medicines);
 
                     do {
                         System.out.println("Search medicine by name or enter 'q' to exit.");
@@ -169,7 +168,7 @@ class UIManager {
                         if (medicines == null) {
                             System.out.println("No results found");
                         } else {
-                            displayData(medicines);
+                            displayMedicineTable(medicines);
                         }
                     } while (true);
                 }
@@ -177,7 +176,7 @@ class UIManager {
                     List<Medicine> medicines = pharmacy.getMedicines();
 
                     do {
-                        displayData(medicines, true);
+                        displayMedicineTable(medicines);
 
                         System.out.println("Instructions: ");
                         System.out.println("- Select medicine by entering its position number.");
@@ -280,42 +279,26 @@ class UIManager {
 
     public static void displayData(Account account) {};
 
-    public static void displayData(List<Medicine> medicines, boolean indexed) {
+    private static void displayMedicineTable(List<Medicine> medicines) {
         asciiTable = new AsciiTable();
         
         // Header
         asciiTable.addRule();
-        if (!indexed) { asciiTable.addRow("Name", "Price", "Amount", "Brand", "Expires At", "Purpose"); }
-        else { asciiTable.addRow("Position #", "Name", "Price", "Amount", "Brand", "Expires At", "Purpose"); }
+        asciiTable.addRow("Position #", "Name", "Price", "Amount", "Brand", "Expires At", "Purpose");
         asciiTable.addRule();
 
-        // Insert data
-        if (!indexed) {
-            for (Medicine medicine : medicines) {
-                asciiTable.addRow(
-                    medicine.getName(), medicine.getPrice(), medicine.getAmount(),
-                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
-                );
-                asciiTable.addRule();
-            }
-        } else {
-            int indexCounter = 0;
-            for (Medicine medicine : medicines) {
-                asciiTable.addRow(
-                    indexCounter, medicine.getName(), medicine.getPrice(), medicine.getAmount(),
-                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
-                );
-                asciiTable.addRule();
-                indexCounter++;
-            }
+        int indexCounter = 0;
+        for (Medicine medicine : medicines) {
+            asciiTable.addRow(
+                indexCounter, medicine.getName(), medicine.getPrice(), medicine.getAmount(),
+                medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+            );
+            asciiTable.addRule();
+            indexCounter++;
         }
 
         // Render and print table to console
         String rend = asciiTable.render();
         System.out.println(rend);
     };
-
-    public static void displayData(List<Medicine> medicines) {
-        displayData(medicines, false);
-    }
 }
