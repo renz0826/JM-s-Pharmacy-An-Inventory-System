@@ -319,7 +319,7 @@ class UIManager {
     }
 
     ;
-    public static void displayData(List<Medicine> medicines) {
+    public static void displayData(List<Medicine> medicines, boolean indexed) {
         asciiTable = new AsciiTable();
 
         // Header
@@ -344,5 +344,8 @@ class UIManager {
         String rend = asciiTable.render();
         System.out.println(rend);
     }
-;
+
+    public static void displayData(List<Medicine> medicines) {
+        displayData(medicines, false);
+    }
 }
