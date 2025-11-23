@@ -67,13 +67,13 @@ public class Customer extends Account {
 
         do {
             System.out.println("\n--- Current Balance: $" + this.funds + " ---");
-            UIManager.displayData(currentDisplayList, true);
+            UIManager.displayMedicineTable(currentDisplayList);
 
             System.out.println("Instructions: ");
             System.out.println("- Select medicine by entering its **position number**.");
             System.out.println("- Search medicine by name or enter 'q' to exit.");
 
-            String input = InputHandler.readNonEmptyLine("Enter input: ");
+            String input = InputHandler.readInput("Enter input: ");
 
             if (input.equalsIgnoreCase("q")) {
                 break;
@@ -105,7 +105,7 @@ public class Customer extends Account {
                     }
 
                     System.out.println("Confirm purchase for $" + totalCost + "? (y/n)");
-                    String confirmation = InputHandler.readNonEmptyLine("(y/n): ");
+                    String confirmation = InputHandler.readInput("(y/n): ");
 
                     if (confirmation.equalsIgnoreCase("y")) {
 
@@ -211,7 +211,7 @@ public class Customer extends Account {
         if (myMedicines == null || myMedicines.isEmpty()) {
             System.out.println("No items purchased yet.");
         } else {
-            UIManager.displayData(myMedicines);
+            UIManager.displayMedicineTable(myMedicines);
         }
 
         // Pause

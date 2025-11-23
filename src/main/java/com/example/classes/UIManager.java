@@ -394,7 +394,7 @@ class UIManager {
         System.out.println(rend);
     }
 
-    private static void displayMedicineTable(List<Medicine> medicines) {
+    public static void displayMedicineTable(List<Medicine> medicines) {
         asciiTable = new AsciiTable();
 
         // Header
