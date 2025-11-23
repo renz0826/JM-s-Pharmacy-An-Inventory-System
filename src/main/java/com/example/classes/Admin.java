@@ -37,9 +37,19 @@ public class Admin extends Account {
         loadCustomers(); // refresh the list so the new accounts are included
     }
 
-    // Method to create a new pharmacy account
-    public void addPharmacyAccount() {
-        System.out.println("Enter Pharmacy Details.");
+    // READ
+    public List<Customer> searchCustomer(String targetName) {
+        List<Customer> matched = new ArrayList<>();
+
+        for (Customer customer : customers) {
+            if (customer.getName().toLowerCase().contains(targetName.toLowerCase())) {
+                matched.add(customer);
+            }
+        }
+
+        if (matched.isEmpty()) return null;
+        return matched;
+    }
         String name = InputHandler.readInput("Name: ");
         String username = InputHandler.readInput("Username: ");
         String password = InputHandler.readInput("Password: ");
