@@ -86,6 +86,10 @@ public class Admin extends Account {
     }
 
     // getters
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
     // HELPER METHODS
     private Customer getCustomer(String targetName) {
         for (Customer customer : customers) {

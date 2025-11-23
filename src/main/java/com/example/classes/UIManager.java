@@ -252,26 +252,91 @@ class UIManager {
                 Please Choose an Option.
                 """;
 
-        System.out.print(menu);
+        boolean running = true;
+        do {
+            System.out.print(menu);
 
-        // Valid choices
-        int choice = InputHandler.getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
-        
-        switch (choice){
-            case 1:
-                break;
-            case 2:
-                //s = new Customer("a", "b");
-                break;
-            case 3:
-                //s = new Customer("a", "b");
-                break;
-            case 4:
-                break;
-            case 0:
-                System.out.println("\nExiting...");
-                break;
-        }
+            // Valid choices
+            int choice = InputHandler.getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
+            
+            switch (choice) {
+                case 1 -> admin.addCustomerAccount();
+                case 2 -> {
+                    List<Customer> customers = admin.getCustomers();
+                    
+                    // display once
+                    displayCustomerTable(customers);
+                    do {
+                        System.out.println("Search customer by name or enter 'q' to exit.");
+                        String targetName = InputHandler.readInput("Enter: ");
+                        if (targetName.equalsIgnoreCase("q")) break;
+                        customers = admin.searchCustomer(targetName);
+
+                        if (customers == null) {
+                            System.out.println("No results found");
+                        } else {
+                            displayCustomerTable(customers);
+                        }
+                    } while (true);
+                }
+                // Customer update or delete
+                case 3, 5 -> {
+                    List<Customer> customers = admin.getCustomers();
+
+                    do {
+                        displayCustomerTable(customers);
+
+                        System.out.println("Instructions: ");
+                        System.out.println("- Select a customer by entering its position number.");
+                        System.out.println("- Search customer by name or enter 'q' to exit.");
+
+                        String input = InputHandler.readInput("Enter input: ");
+
+                        // exit if quit
+                        if (input.equalsIgnoreCase("q")) break;
+
+                        // do not allow double for position
+                        String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)"; 
+                        if (input.matches(doublePattern)) {
+                            System.out.println("[ERROR]: Enter a valid position");
+                            continue;
+                        }
+                        
+                        // if number then select customer, else search
+                        int pos = 0;
+                        String targetName;
+                        try {
+                            pos = Integer.parseInt(input);
+                            targetName = customers.get(pos).getName();
+                        } catch (NumberFormatException e) {
+                            List<Customer> result = admin.searchCustomer(input);
+                            if (result == null) { System.out.println("No results found"); }
+                            else { customers = result; }
+                            continue;
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.println("[ERROR]: Customer not found at position " + pos);
+                            continue;
+                        }
+
+                        if (choice == 3) { 
+                            admin.updateCustomerDetails(targetName); 
+                        } else {
+                            System.out.println("Are you sure you want to delete " + targetName + "?");
+                            String confirmation = InputHandler.readInput("(y/n): ");
+                            if (confirmation.equalsIgnoreCase("y")) { admin.deleteCustomer(targetName); }
+                            customers = admin.getCustomers(); // update list
+                        }
+                    } while (true);
+                }
+                case 4 -> {
+                    admin.updatePharamacyDetails();
+                }
+                case 0 -> {
+                    System.out.println("\nExiting...");
+                    running = false;
+                }
+            }
+        } while (running);
     }
 
     private static void displayCustomerTable(List<Customer> accounts) {
