@@ -57,6 +57,21 @@ public class Database {
         serialize(data, path);
     }
 
+    public static void delete(Customer customer) {
+        Path file = objectFiles.get(customer);
+        if (file == null) throw new IllegalStateException("Unknown object");
+
+        // file may already be gone
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            System.err.println("[ERROR]: File operation occured.");
+        }
+
+        // remove tracking either way
+        objectFiles.remove(customer);
+    }
+
     public static void createCustomer(Customer data) {
         createFile(data, customersDatabasePath);
     }

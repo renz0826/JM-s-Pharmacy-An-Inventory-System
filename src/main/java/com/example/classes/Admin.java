@@ -47,6 +47,26 @@ public class Admin extends Account {
 
         Pharmacy newPharmacy = new Pharmacy(name, username, password, medicines);
         Database.createAccount(newPharmacy);
+    // DELETE
+    public void deleteCustomer(String targetName) {
+        Customer customer = getCustomer(targetName);
+        customers.remove(customer);
+        Database.delete(customer);
+        loadCustomers();
+    }
+
+    // getters
+    // HELPER METHODS
+    private Customer getCustomer(String targetName) {
+        for (Customer customer : customers) {
+            if (customer.getName().equalsIgnoreCase(targetName)) {
+                return customer;
+            }
+        }
+
+        return null;
+    }
+
     private void loadCustomers() {
         customers = new ArrayList<>();
 
