@@ -3,6 +3,7 @@ package com.example.classes;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -65,9 +66,11 @@ public class Database {
     private static <T extends Account> T deserialize(Path filePath, Class<T> account) {
         try {
             return objectMapper.readValue(filePath.toFile(), account);
+        } catch (MismatchedInputException e) {
+            System.err.println("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
         } catch (Exception e) {
             e.printStackTrace();
-        }  
+        }
 
         return null;
     }

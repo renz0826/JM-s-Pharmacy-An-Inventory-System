@@ -1,7 +1,5 @@
 package com.example.classes;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,10 +33,7 @@ public class AuthService {
         for (Path path : clientFiles) {
             if (Files.isRegularFile(path)) {
                 Pharmacy pharmacy = Database.load(path, Pharmacy.class);
-                if (pharmacy == null) {
-                    System.out.println("Error occured");
-                    return null;
-                }
+                if (pharmacy == null) continue;
 
                 if (pharmacy.getUsername().equals(username) && pharmacy.getPassword().equals(password)) {
                     System.out.println("Pharmacy authorized");
