@@ -79,24 +79,46 @@ public class Database {
     }
 
     // Method to safely write changes to file
-    private static void serialize(Account data, Path temporary, Path permanent) {
-        // XXX: The nested try-catch was created for fun, idk if its a good idea
-        try {
-            objectMapper.writeValue(temporary.toFile(), data); // write changes to temporary file
-            Files.move(temporary, permanent, StandardCopyOption.REPLACE_EXISTING); // replace temporary file name to permanent file name
+    private static void serialize(Account data, Path permanent) {
+        Path temporary = permanent.resolveSibling(".tmp");
 
-            System.out.println("Data successfully written to " + permanent.toAbsolutePath().toString());
-        } catch (NoSuchFileException e) {
-            System.err.println("[ERROR]: " + permanent + " does not exist");
-            System.out.println("[SYSTEM]: Attempting to recreate " + permanent);
-            try {
-                Files.createDirectories(permanent);
-                System.out.println("[SYSTEM]: " + permanent + " created. Please enter the information again.");
-            } catch (IOException innerE) {
-                System.err.println("[ERROR]: File cannot be created:\n" + e);
+        try {
+            // Ensure directory exists
+            if (permanent.getParent() != null)
+                Files.createDirectories(permanent.getParent());
+
+            boolean exists = Files.exists(permanent);
+
+            if (exists) {
+                // SAFE UPDATE: temp + atomic move
+                objectMapper.writeValue(temporary.toFile(), data);
+                Files.move(temporary, permanent, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                // NEW FILE: write directly
+                objectMapper.writeValue(permanent.toFile(), data);
             }
+
+            System.out.println("Data successfully written to " + permanent.toAbsolutePath());
+
         } catch (IOException e) {
-            System.err.println("[ERROR]: A file operation error has occured:\n" + e);
+            System.err.println("[ERROR]: Failed to write file:\n" + e);
+            try { Files.deleteIfExists(temporary); } catch (IOException ignored) {}
+        }
+    }
+
+    private static <T extends Account> void createFile(T data, Path basePath) {
+        Path path = basePath.resolve(data.getName() + ".json");
+
+        if (Files.exists(path)) {
+            System.err.println("[ERROR]: " + path + " already exists!");
+            return;
+        }
+
+        try {
+            Files.createFile(path);
+            serialize(data, path);
+        } catch (IOException e) {
+            System.err.println("[ERROR]: Cannot create " + path);
         }
     }
 
