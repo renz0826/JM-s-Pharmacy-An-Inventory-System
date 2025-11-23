@@ -160,6 +160,67 @@ public class Customer extends Account {
         } while (true);
     }
 
+    public void viewAccountDetails() {
+        // ==========================================
+        // PART 1: The Title (1 Column Table)
+        // ==========================================
+        AsciiTable titleTable = new AsciiTable();
+        titleTable.addRule();
+        titleTable.addRow("+ Account Details +");
+        titleTable.setTextAlignment(TextAlignment.CENTER);
+        titleTable.addRule();
+        System.out.println(titleTable.render());
+
+        // ==========================================
+        // PART 2: The Data (2 Column Table)
+        // ==========================================
+        at = new AsciiTable(); // <--- CRITICAL: Create a NEW table for 2 columns
+
+        at.addRule();
+        at.addRow("Name", this.getName());
+        at.addRule();
+        at.addRow("Username", this.getUsername());
+        at.addRule();
+        at.addRow("Current Balance", String.format("PHP %,.2f", this.funds));
+        at.addRule();
+
+        // Styling for Data
+        at.setTextAlignment(TextAlignment.LEFT);
+        at.setPadding(1);
+
+        System.out.println(at.render());
+        System.out.println();
+
+        // ==========================================
+        // PART 3: Medicine Cabinet Header (1 Column)
+        // ==========================================
+        AsciiTable headerTable = new AsciiTable();
+
+        headerTable.addRule();
+        headerTable.addRow("+ Medicine Cabinet +");
+        headerTable.setTextAlignment(TextAlignment.CENTER);
+        headerTable.addRule();
+
+        System.out.println(headerTable.render());
+
+        // ==========================================
+        // PART 4: Inventory List
+        // ==========================================
+        List<Medicine> myMedicines = getMedicines();
+
+        if (myMedicines == null || myMedicines.isEmpty()) {
+            System.out.println("No items purchased yet.");
+        } else {
+            UIManager.displayData(myMedicines);
+        }
+
+        // Pause
+        System.out.println("\n(Press Enter to return to menu)");
+        try {
+            System.in.read(); // Correctly waits for Enter key
+        } catch (Exception e) {
+            // Ignore errors
+        }
     }
 
     public void depositFunds() {
