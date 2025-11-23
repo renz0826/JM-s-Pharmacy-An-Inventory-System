@@ -52,8 +52,8 @@ class UIManager {
             // prompt user credentials
             while (authenticated == null) {
                 System.out.println("====== Login System ======");
-                String username = InputHandler.readNonEmptyLine("Enter username: ");
-                String password = InputHandler.readNonEmptyLine("Enter password: ");
+                String username = InputHandler.readInput("Enter username: ");
+                String password = InputHandler.readInput("Enter password: ");
                 
                 // verify credentials
                 authenticated = switch (accountType) {
@@ -64,7 +64,7 @@ class UIManager {
 
                 if (authenticated == null) {
                     System.out.println("Login failed. Enter anything to try again.");
-                    String input = InputHandler.readNonEmptyLine("Enter 'q' to exit: ");
+                    String input = InputHandler.readInput("Enter 'q' to exit: ", true);
                     if (input.equals("q")) break;
                 }
             }
@@ -162,7 +162,7 @@ class UIManager {
 
                     do {
                         System.out.println("Search medicine by name or enter 'q' to exit.");
-                        String targetName = InputHandler.readNonEmptyLine("Enter: ");
+                        String targetName = InputHandler.readInput("Enter: ");
                         if (targetName.equalsIgnoreCase("q")) break;
                         medicines = pharmacy.searchMedicine(targetName);
 
@@ -183,7 +183,7 @@ class UIManager {
                         System.out.println("- Select medicine by entering its position number.");
                         System.out.println("- Search medicine by name or enter 'q' to exit.");
 
-                        String input = InputHandler.readNonEmptyLine("Enter input: ");
+                        String input = InputHandler.readInput("Enter input: ");
 
                         // exit if quit
                         if (input.equalsIgnoreCase("q")) break;
@@ -220,7 +220,7 @@ class UIManager {
                             pharmacy.updateMedicinePrice(targetName, amount); 
                         } else {
                             System.out.println("Are you sure you want to delete " + targetName + "?");
-                            String confirmation = InputHandler.readNonEmptyLine("(y/n): ");
+                            String confirmation = InputHandler.readInput("(y/n): ");
                             if (confirmation.equalsIgnoreCase("y")) { pharmacy.deleteMedicine(targetName); }
                             medicines = pharmacy.getMedicines(); // update list
                         }

@@ -26,12 +26,12 @@ public class Pharmacy extends Account {
     public void addMedicine() {
         // Prompt line and Input validation
         System.out.println("Enter medicine details.");
-        String name = InputHandler.readNonEmptyLine("Name: ");
+        String name = InputHandler.readInput("Name: ");
         double price = InputHandler.readDouble("Price (PHP): ");
         int amount = InputHandler.readInt("Initial amount: ");
         String expirationDate = InputHandler.readDate("Expiration Date (d/m/yyyy): ");
-        String brand = InputHandler.readNonEmptyLine("Brand: ");
-        String purpose = InputHandler.readNonEmptyLine("Purpose: ");
+        String brand = InputHandler.readInput("Brand: ");
+        String purpose = InputHandler.readInput("Purpose: ");
 
         // Save sanitized inputs to database
         Medicine newMedicine = new Medicine(name, brand, purpose, expirationDate, amount, price);
