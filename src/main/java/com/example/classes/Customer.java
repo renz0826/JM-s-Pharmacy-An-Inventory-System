@@ -43,6 +43,12 @@ public class Customer extends Account {
 
     // -----------------------------------------------------------
     public void buyMedicine() {
+        // 1. Check if Pharmacy can be loaded
+        Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
+
+        if (targetPharmacy == null) return;
+
+        // 2. Continue program if Pharmacy is ok
         at = new AsciiTable();
         at.addRule();
         at.addRow("+ Buy Medicine +");
@@ -54,14 +60,6 @@ public class Customer extends Account {
         at.addRule();
         String rend = at.render();
         System.out.println(rend);
-
-        // 1. Load the specific Pharmacy instance
-        Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
-
-        if (targetPharmacy == null) {
-            System.out.println("[ERROR]: Failed to load Jm Pharmacy data.");
-            return;
-        }
 
         List<Medicine> currentDisplayList = targetPharmacy.getMedicines();
 
@@ -77,12 +75,9 @@ public class Customer extends Account {
             System.out.println("\nInstructions: ");
             System.out.println("- Select medicine by entering its ** position number **.");
             System.out.println("- Search medicine by name or enter 'q' to exit.");
-
             String input = InputHandler.readInput("\nEnter input: >> ");
 
-            if (input.equalsIgnoreCase("q")) {
-                break;
-            }
+            if (input.equalsIgnoreCase("q")) break;
 
             try {
                 int pos = Integer.parseInt(input);
@@ -163,6 +158,20 @@ public class Customer extends Account {
                     currentDisplayList = searchResult;
                 }
             }
+        } while (true);
+
+        // Display after buying 
+        do {
+            UIManager.clear();
+            at = new AsciiTable();
+            at.addRule();
+            at.addRow("Would you like to buy another medicine? (y/n)");
+            at.addRule();
+            at.setTextAlignment(TextAlignment.CENTER);
+            System.out.println(at.render());
+
+            if (InputHandler.promptYesOrNo()) continue;
+            else break;
         } while (true);
 
     }

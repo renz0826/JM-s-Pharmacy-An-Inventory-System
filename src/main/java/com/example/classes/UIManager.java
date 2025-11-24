@@ -131,112 +131,104 @@ class UIManager {
     }
 
     public static void displayCustomerMenu(Customer customer) {
-        UIManager.clear();
+        do {
+            UIManager.clear();
+            asciiTable = new AsciiTable();
+            // Header
+            asciiTable.addRule();
+            asciiTable.addRow("+ Customer Menu +");
+            asciiTable.addRule();
+            asciiTable.setTextAlignment(TextAlignment.CENTER);
 
-        asciiTable = new AsciiTable();
-        // Header
-        asciiTable.addRule();
-        asciiTable.addRow("+ Customer Menu +");
-        asciiTable.addRule();
-        asciiTable.setTextAlignment(TextAlignment.CENTER);
+            String[] rows = {
+                "1. Buy Medicine",
+                "2. View Account Details",
+                "3. Deposit Funds",};
 
-        String[] rows = {
-            "1. Buy Medicine",
-            "2. View Account Details",
-            "3. Deposit Funds",};
+            for (String label : rows) {
+                AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
+                cell.getContext().setPadding(1).setPaddingLeft(7);
+                cell.getContext().setTextAlignment(TextAlignment.LEFT);
+            }
 
-        for (String label : rows) {
-            AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
-            cell.getContext().setPadding(1).setPaddingLeft(7);
-            cell.getContext().setTextAlignment(TextAlignment.LEFT);
-        }
+            asciiTable.addRule();
+            AT_Row row = asciiTable.addRow("0. Logout");
+            row.setPadding(1).setPaddingLeft(7);
+            asciiTable.addRule();
 
-        asciiTable.addRule();
-        AT_Row row = asciiTable.addRow("0. Logout");
-        row.setPadding(1).setPaddingLeft(7);
-        asciiTable.addRule();
+            // Render and print
+            String rend = asciiTable.render();
+            System.out.println(rend);
+            ErrorMessage.displayNext();
 
-        // Render and print
-        String rend = asciiTable.render();
-        System.out.println(rend);
+            // Valid choices
+            int choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0));
 
-        // Valid choices
-        int choice = InputHandler.getValidChoice(Set.of(4, 3, 2, 1, 0));
+            switch (choice) {
+                case 1 -> customer.buyMedicine();
+                // {
+                    
+                //     boolean stayingInAddMenu = true;
+                //     while (stayingInAddMenu) {
 
-        switch (choice) {
-            case 1 -> {
-                boolean stayingInAddMenu = true;
-                while (stayingInAddMenu) {
+                //         // 1. Perform the action FIRST
+                //         // 2. Then ask what to do next
+                //         // UIManager.clear();
+                //         // asciiTable = new AsciiTable();
+                //         // asciiTable.addRule();
+                //         // asciiTable.addRow("Would you like to buy another medicine? (y/n)");
+                //         // asciiTable.addRule();
+                //         // asciiTable.setTextAlignment(TextAlignment.CENTER);
+                //         // System.out.println(asciiTable.render());
 
-                    // 1. Perform the action FIRST
-                    customer.buyMedicine();
-                    // 2. Then ask what to do next
-                    UIManager.clear();
-                    asciiTable = new AsciiTable();
-                    asciiTable.addRule();
-                    asciiTable.addRow("What action would you like to perform next?");
-                    asciiTable.addRule();
-                    asciiTable.setTextAlignment(TextAlignment.CENTER);
+                //         // if (InputHandler.promptYesOrNo()) continue;
+                //         // else break;
+                //     }
+                // }
+                case 2 -> {
+                    customer.viewAccountDetails();
+                    UIManager.displayCustomerMenu(customer);
+                }
+                case 3 -> {
+                    boolean stayingInAddMenu = true;
+                    while (stayingInAddMenu) {
 
-                    String[] options = {"1. Buy Again", "2. Back to Menu"};
+                        // 1. Perform the action FIRST
+                        customer.depositFunds();
+                        // 2. Then ask what to do next
+                        UIManager.clear();
+                        asciiTable = new AsciiTable();
+                        asciiTable.addRule();
+                        asciiTable.addRow("What action would you like to perform next?");
+                        asciiTable.addRule();
+                        asciiTable.setTextAlignment(TextAlignment.CENTER);
 
-                    for (String label : options) {
-                        AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
-                        cell.getContext().setPadding(1).setPaddingLeft(7);
-                        cell.getContext().setTextAlignment(TextAlignment.LEFT);
-                    }
-                    asciiTable.addRule();
+                        // TODO: turn this into (y/n)
+                        String[] options = {"1. Deposit Again", "2. Back to Menu"};
 
-                    System.out.println(asciiTable.render());
+                        for (String label : options) {
+                            AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
+                            cell.getContext().setPadding(1).setPaddingLeft(7);
+                            cell.getContext().setTextAlignment(TextAlignment.LEFT);
+                        }
+                        asciiTable.addRule();
 
-                    int subChoice = InputHandler.getValidChoice(Set.of(2, 1));
+                        System.out.println(asciiTable.render());
 
-                    if (subChoice == 2) {
-                        stayingInAddMenu = false;
-                        UIManager.displayCustomerMenu(customer);
+                        int subChoice = InputHandler.getValidChoice(Set.of(2, 1));
+
+                        if (subChoice == 2) {
+                            stayingInAddMenu = false;
+                            UIManager.displayCustomerMenu(customer);
+                        }
                     }
                 }
-            }
-            case 2 -> {
-                customer.viewAccountDetails();
-                UIManager.displayCustomerMenu(customer);
-            }
-            case 3 -> {
-                boolean stayingInAddMenu = true;
-                while (stayingInAddMenu) {
-
-                    // 1. Perform the action FIRST
-                    customer.depositFunds();
-                    // 2. Then ask what to do next
-                    UIManager.clear();
-                    asciiTable = new AsciiTable();
-                    asciiTable.addRule();
-                    asciiTable.addRow("What action would you like to perform next?");
-                    asciiTable.addRule();
-                    asciiTable.setTextAlignment(TextAlignment.CENTER);
-
-                    String[] options = {"1. Deposit Again", "2. Back to Menu"};
-
-                    for (String label : options) {
-                        AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
-                        cell.getContext().setPadding(1).setPaddingLeft(7);
-                        cell.getContext().setTextAlignment(TextAlignment.LEFT);
-                    }
-                    asciiTable.addRule();
-
-                    System.out.println(asciiTable.render());
-
-                    int subChoice = InputHandler.getValidChoice(Set.of(2, 1));
-
-                    if (subChoice == 2) {
-                        stayingInAddMenu = false;
-                        UIManager.displayCustomerMenu(customer);
-                    }
+                case 0 -> {
+                    System.out.println("\nExiting...");
+                    break;
                 }
             }
-            case 0 ->
-                System.out.println("\nExiting...");
-        }
+        } while (true);
     }
 
     public static void displayPharmacyMenu(Pharmacy pharmacy) {
