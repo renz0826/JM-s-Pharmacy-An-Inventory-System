@@ -435,7 +435,7 @@ class UIManager {
                         // do not allow double for position
                         String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)"; 
                         if (input.matches(doublePattern)) {
-                            System.out.println("[ERROR]: Enter a valid position");
+                            ErrorMessage.queueMessage("\n[ERROR]: Enter a valid position");
                             continue;
                         }
                         
@@ -447,11 +447,14 @@ class UIManager {
                             targetName = customers.get(pos).getName();
                         } catch (NumberFormatException e) {
                             List<Customer> result = admin.searchCustomer(input);
-                            if (result == null) { System.out.println("No results found"); }
+                            if (result == null) { 
+                                ErrorMessage.queueMessage("\n[SUCCESS]: No results found."); 
+                                customers = admin.getCustomers(); // reset the table
+                            }
                             else { customers = result; }
                             continue;
                         } catch (IndexOutOfBoundsException e) {
-                            System.out.println("[ERROR]: Customer not found at position " + pos);
+                            ErrorMessage.queueMessage("\n[ERROR]: Invalid Position.");
                             continue;
                         }
 
