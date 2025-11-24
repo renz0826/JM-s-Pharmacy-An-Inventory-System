@@ -177,28 +177,12 @@ class UIManager {
                         UIManager.clear();
                         asciiTable = new AsciiTable();
                         asciiTable.addRule();
-                        asciiTable.addRow("What action would you like to perform next?");
+                        asciiTable.addRow("Would you like to deposit again? (y/n)");
                         asciiTable.addRule();
                         asciiTable.setTextAlignment(TextAlignment.CENTER);
-
-                        // TODO: turn this into (y/n)
-                        String[] options = {"1. Deposit Again", "2. Back to Menu"};
-
-                        for (String label : options) {
-                            AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
-                            cell.getContext().setPadding(1).setPaddingLeft(7);
-                            cell.getContext().setTextAlignment(TextAlignment.LEFT);
-                        }
-                        asciiTable.addRule();
-
                         System.out.println(asciiTable.render());
-
-                        int subChoice = InputHandler.getValidChoice(Set.of(2, 1));
-
-                        if (subChoice == 2) {
-                            stayingInAddMenu = false;
-                            UIManager.displayCustomerMenu(customer);
-                        }
+                        if (InputHandler.promptYesOrNo()) { continue; }
+                        else { break; }
                     }
                 }
                 case 0 -> {
