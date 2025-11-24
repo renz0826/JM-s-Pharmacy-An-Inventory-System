@@ -271,7 +271,7 @@ class UIManager {
                         ErrorMessage.displayNext();
 
                         System.out.println("Search medicine by name or enter 'q' to exit.");
-                        String targetName = InputHandler.readInput("Enter: ");
+                        String targetName = InputHandler.readInput("Enter >> ");
                         if (targetName.equalsIgnoreCase("q")) { break; }
                         List<Medicine> found = pharmacy.searchMedicine(targetName);
 
@@ -297,7 +297,7 @@ class UIManager {
                         System.out.println("- Select medicine by entering its position number.");
                         System.out.println("- Search medicine by name or enter 'q' to exit.");
 
-                        String input = InputHandler.readInput("Enter input: ");
+                        String input = InputHandler.readInput("Enter input >> ");
 
                         // exit if quit
                         if (input.equalsIgnoreCase("q")) {
@@ -331,10 +331,10 @@ class UIManager {
                         }
 
                         if (mainChoice == 3) {
-                            int amount = InputHandler.readInt("Enter amount: ", true);
+                            int amount = InputHandler.readInt("Enter amount >> ", true);
                             pharmacy.updateMedicineAmount(targetName, amount);
                         } else if (mainChoice == 4) {
-                            double amount = InputHandler.readDouble("Enter new price: ");
+                            double amount = InputHandler.readDouble("Enter new price >> ");
                             pharmacy.updateMedicinePrice(targetName, amount);
                         } else {
                             // 1. Render heading
@@ -393,7 +393,7 @@ class UIManager {
                     displayCustomerTable(customers);
                     do {
                         System.out.println("Search customer by name or enter 'q' to exit.");
-                        String targetName = InputHandler.readInput("Enter: ");
+                        String targetName = InputHandler.readInput("Enter >> ");
                         if (targetName.equalsIgnoreCase("q")) break;
                         customers = admin.searchCustomer(targetName);
 
@@ -415,7 +415,7 @@ class UIManager {
                         System.out.println("- Select a customer by entering its position number.");
                         System.out.println("- Search customer by name or enter 'q' to exit.");
 
-                        String input = InputHandler.readInput("Enter input: ");
+                        String input = InputHandler.readInput("Enter input >> ");
 
                         // exit if quit
                         if (input.equalsIgnoreCase("q")) break;
