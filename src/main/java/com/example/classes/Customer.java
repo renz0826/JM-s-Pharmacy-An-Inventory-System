@@ -206,7 +206,7 @@ public class Customer extends Account {
         headerTable.setTextAlignment(TextAlignment.CENTER);
         headerTable.addRule();
 
-        headerTable.getContext().setWidth(166);
+        headerTable.getContext().setWidth(80);
 
         System.out.println(headerTable.render());
 
@@ -242,7 +242,7 @@ public class Customer extends Account {
 
         System.out.println(rend);
 
-        double value = InputHandler.readDouble("");
+        double value = InputHandler.readDouble("Enter amount >> ");
 
         this.funds += value;
 
