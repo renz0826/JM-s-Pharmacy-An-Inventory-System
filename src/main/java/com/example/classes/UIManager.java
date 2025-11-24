@@ -359,27 +359,39 @@ class UIManager {
     }
 
     public static void displayAdminMenu(Admin admin) {
-        String menu = """
-                ==============================================
-                |               + Admin Menu +               |
-                ==============================================
-                |                                            |
-                |   1. Register a customer                   |
-                |   2. Show list of customers                |
-                |   3. Edit customer credentials             |
-                |   4. Edit pharmacy credentials             |
-                |   5. Delete customer                       |
-                |                                            |
-                |   0. Logout                                |
-                |                                            |
-                ==============================================
-            """;
-            // Clear screen at start of every loop
-            UIManager.clear();
+        UIManager.clear();
+        asciiTable = new AsciiTable();
+        // Header
+        asciiTable.addRule();
+        asciiTable.addRow("+ Admin Menu +");
+        asciiTable.addRule();
+        asciiTable.setTextAlignment(TextAlignment.CENTER);
 
-        boolean running = true;
+        String[] rows = {
+            "1. Register A Customer",
+            "2. Show List Of Customers",
+            "3. Edit Customer Credentials",
+            "4. Edit Pharmacy Credentials",
+            "5. Delete Customer"};
+
+        for (String label : rows) {
+            AT_Cell cell = asciiTable.addRow(label).getCells().get(0);
+            cell.getContext().setPadding(1).setPaddingLeft(7);
+            cell.getContext().setTextAlignment(TextAlignment.LEFT);
+        }
+
+        asciiTable.addRule();
+        AT_Row row = asciiTable.addRow("0. Logout");
+        row.setPadding(1).setPaddingLeft(7);
+        asciiTable.addRule();
+
+       // Render table
+        String rend = asciiTable.render();
+        
         do {
-            System.out.print(menu);
+            // Print table and any error message
+            System.out.println(rend);
+            ErrorMessage.displayNext();
 
             // Valid choices
             int choice = InputHandler.getValidChoice(Set.of(8, 7, 6, 5, 4, 3, 2, 1, 0));
