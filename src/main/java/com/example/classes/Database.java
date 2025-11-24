@@ -89,8 +89,8 @@ public class Database {
     private static <T extends Account> T deserialize(Path filePath, Class<T> account) {
         try {
             return objectMapper.readValue(filePath.toFile(), account);
-        } catch (MismatchedInputException e) {
-            System.err.println("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
+        } catch (IOException e) {
+            ErrorMessage.queueMessage("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
         } catch (Exception e) {
             e.printStackTrace();
         }
