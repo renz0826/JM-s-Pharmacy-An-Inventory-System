@@ -11,33 +11,12 @@ public class InputHandler {
 
     private static final Scanner SCAN = new Scanner(System.in);
 
-    public static double getDoubleChoice() {
-        double value;
-
-        while (true) {
-            System.out.print("\nEnter Amount >> ");
-            String input = SCAN.nextLine();
-
-            // Validate inputs
-            try {
-                value = Double.parseDouble(input);
-
-                return value;
-
-            } catch (NumberFormatException e) {
-                // If input is not numeric
-                System.out.println("\nInvalid input. \nPlease enter a number.\n");
-            }
-        }
-    }
-
     // Method for retrieving and validating inputs
     public static int getValidChoice(Set<Integer> validChoices) {
         int choice;
 
         while (true) {
-            System.out.print("\nEnter Choice >> ");
-            String input = SCAN.nextLine();
+            String input = readInput("\nEnter Choice >> ");
 
             // Validate inputs
             try {
@@ -49,11 +28,11 @@ public class InputHandler {
                     return choice;
                 } else {
                     // Input is numeric but not allowed
-                    System.out.println("\nInvalid choice. \nAllowed: " + validChoices + "\n");
+                    System.out.println("\nInvalid choice. \nAllowed: " + validChoices + "");
                 }
             } catch (NumberFormatException e) {
                 // If input is not numeric
-                System.out.println("\nInvalid input. \nPlease enter an integer.\n");
+                System.out.println("\nInvalid input. \nPlease enter an integer.");
             }
         }
     }
@@ -76,7 +55,7 @@ public class InputHandler {
             input = SCAN.nextLine();
         
             if (input.isEmpty() && !allowEmpty) {
-                System.err.println("[ERROR]: Input cannot be empty");    
+                System.err.println("\n[ERROR]: Input cannot be empty");    
                 continue;
             }
             input = input.trim();
@@ -92,10 +71,9 @@ public class InputHandler {
      * Reads an integer from the user.
      *
      * Prompts the user with the given message and repeatedly reads input until
-     * a valid non-negative integer is provided. Input is validated to ensure it
-     * is a valid integer and is not negative. This method uses
-     * {@link #readNonEmptyLine(String)} to handle input collection and
-     * trimming.
+     * a valid integer is provided. Input is validated to ensure it is a valid
+     * integer. This method uses {@link #readNonEmptyLine(String)} to handle
+     * input collection and trimming.
      *
      * @param prompt the message displayed to the user before reading input
      * @param allowNegative whether negatives are allowed or not
@@ -113,15 +91,15 @@ public class InputHandler {
                 i = Integer.parseInt(input);
 
                 if (i < 0 && !allowNegative) {
-                    System.err.println("[ERROR]: Cannot be negative");
+                    System.err.println("\n[ERROR]: Cannot be negative");
                     continue;
                 }
 
                 return i;
             } catch (NumberFormatException e) {
-                System.err.println("[ERROR]: Input must be an integer.");
+                System.err.println("\n[ERROR]: Input must be an integer.");
             } catch (Exception e) {
-                System.err.println("[ERROR]: " + e);
+                System.err.println("\n[ERROR]: " + e);
             }
         }
     }
@@ -154,15 +132,15 @@ public class InputHandler {
                 d = Double.parseDouble(input);
 
                 if (d < 0) {
-                    System.err.println("[ERROR]: Cannot be negative");
+                    System.err.println("\n[ERROR]: Cannot be negative.");
                     continue;
                 }
 
                 return d;
             } catch (NumberFormatException e) {
-                System.err.println("[ERROR]: Input must be a number.");
+                System.err.println("\n[ERROR]: Input must be a number.");
             } catch (Exception e) {
-                System.err.println("[ERROR]: " + e);
+                System.err.println("\n[ERROR]: " + e);
             }
         }
     }
@@ -191,7 +169,7 @@ public class InputHandler {
                 date = LocalDate.parse(input, format);
                 return date.format(format);
             } catch (DateTimeParseException e) {
-                System.err.println("[ERROR]: Incorrect date format. Use d/M/yyyy");
+                System.err.println("\n[ERROR]: Incorrect date format. Use d/M/yyyy");
             }
         }
     }
