@@ -112,7 +112,8 @@ class UIManager {
                 };
 
                 if (authenticated == null) {
-                    System.out.println("\n[ERROR] Login failed. \nEnter anything to try again or enter 'q' to exit.");
+                    ErrorMessage.display("\n[ERROR] Login failed.");
+                    System.out.println("Enter anything to try again or enter 'q' to exit.");
                     String input = InputHandler.readInput("\nEnter Choice >> ", true);
                     if (input.equals("q")) {
                         break;
