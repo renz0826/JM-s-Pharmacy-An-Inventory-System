@@ -139,16 +139,21 @@ public class Customer extends Account {
             } catch (NumberFormatException e) {
                 List<Medicine> searchResult = targetPharmacy.searchMedicine(input);
                 if (searchResult == null) {
-                    System.out.println("\nNo results found.");
+                    ErrorMessage.queueMessage("\n[SUCCESS]: No results found.");
                     currentDisplayList = targetPharmacy.getMedicines();
-                } else { currentDisplayList = searchResult; }
+                    continue;
+                } else { 
+                    ErrorMessage.queueMessage("[SUCCESS]: Found " + searchResult.size() + " results.");
+                    currentDisplayList = searchResult; 
+                    continue;
+                }
             }
 
             // Display after buying 
             UIManager.clear();
             String message = "Would you like to buy another medicine? (y/n)";
             System.out.println(AsciiTableBuilder.buildSingleRow(message));
-
+    
             if (InputHandler.promptYesOrNo()) { continue; }
             else { break; }
         } while (true);
