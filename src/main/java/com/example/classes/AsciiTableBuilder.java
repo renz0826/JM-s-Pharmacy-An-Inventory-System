@@ -72,4 +72,39 @@ public class AsciiTableBuilder {
         // Return rendered table
         return at.render();
     }
+
+    public String buildGenericPopUpMenu() {
+        // Validation checks
+        if (header == null) {
+            throw new IllegalStateException("Menu table is missing a header!");
+        }
+        if (bodyRows.isEmpty()) {
+            throw new IllegalStateException("Menu table is missing rows!");
+        }
+        
+        AsciiTable at = new AsciiTable();
+
+        at.addRule();
+        at.addRow(header).setTextAlignment(TextAlignment.CENTER);
+        at.addRule();
+        
+        at.addRow(bodyRows.getFirst())
+            .setPadding(1)
+            .setPaddingLeft(7)
+            .setTextAlignment(TextAlignment.LEFT);
+        at.addRule();
+
+        return at.render();
+    }
+
+    public static String buildSingleRow(String content) {
+        AsciiTable at = new AsciiTable();
+
+        at.addRule();
+        at.addRow(content);
+        at.addRule();
+        at.setTextAlignment(TextAlignment.CENTER);
+
+        return at.render();
+    } 
 }
