@@ -1,0 +1,75 @@
+package com.example.classes;
+
+import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class AsciiTableBuilder {
+    private String header;
+    private List<String> bodyRows = new ArrayList<>();
+    private String footer;
+
+    public AsciiTableBuilder() {
+    }
+
+    public AsciiTableBuilder setHeader(String content) {
+        this.header = content;
+        return this;
+    }
+
+    public AsciiTableBuilder setRow(String content) {
+        this.bodyRows.add(content);
+        return this;
+    }
+
+    public AsciiTableBuilder setRows(String... contents) {
+        this.bodyRows.addAll(Arrays.asList(contents));
+        return this;
+    }
+
+    public AsciiTableBuilder setFooter(String content) {
+        this.footer = content;
+        return this;
+    }
+
+    public String buildGenericMenuTable() {
+        if (header == null) {
+            throw new IllegalStateException("Menu table is missing a header!");
+        }
+        if (bodyRows.isEmpty()) {
+            throw new IllegalStateException("Menu table is missing rows!");
+        }
+        if (footer == null) {
+            throw new IllegalStateException("Menu table is missing a footer!");
+        }
+  
+        AsciiTable at = new AsciiTable();
+
+        // Add header
+        at.addRule();
+        at.addRow(this.header)
+          .setTextAlignment(TextAlignment.CENTER);
+        at.addRule();
+
+        // Add body rows
+        for (String content : bodyRows) {
+            at.addRow(content)
+              .setTextAlignment(TextAlignment.LEFT)
+              .setPadding(1)  // General padding
+              .setPaddingLeft(7);  // Override left padding
+        }
+        at.addRule();
+
+        // Add footer
+        at.addRow(this.footer)
+          .setPadding(1)
+          .setPaddingLeft(7);
+        at.addRule();
+
+        // Return rendered table
+        return at.render();
+    }
+}
