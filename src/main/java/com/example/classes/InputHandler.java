@@ -6,6 +6,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.Set;
 
+import java.lang.Math;
+
 // This class handles user input and input validation
 public class InputHandler {
 
@@ -38,13 +40,10 @@ public class InputHandler {
      * @return the valid choice as integer
      */
     public static int getValidChoice(Set<Integer> validChoices) {
-        int choice;
-
         while (true) {
             // Validate inputs
             try {
-                String input = readInput("\nEnter Choice >> ");
-                choice = Integer.parseInt(input); // Convert strings to int
+                int choice = readInt("\nEnter Choice >> ");
 
                 // Checks if integer is one of the allowed choices
                 if (validChoices.contains(choice)) {
@@ -167,7 +166,7 @@ public class InputHandler {
                     continue;
                 }
 
-                return d;
+                return Math.round(d * 100.0) / 100.0;
             } catch (NumberFormatException e) {
                 System.err.println("\n[ERROR]: Input must be a number.");
             } catch (Exception e) {
