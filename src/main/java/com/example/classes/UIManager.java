@@ -3,11 +3,8 @@ package com.example.classes;
 import java.util.List;
 import java.util.Set;
 
-import de.vandermeer.asciitable.AT_Cell;
-import de.vandermeer.asciitable.AT_Row;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestLine;
-import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 
 // UI class for design
 class UIManager {

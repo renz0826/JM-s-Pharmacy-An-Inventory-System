@@ -1,6 +1,5 @@
 package com.example.classes;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class Admin extends Account {
         loadCustomers();
     }
 
-    // getters
+    // GETTERS
     public List<Customer> getCustomers() {
         return customers;
     }
