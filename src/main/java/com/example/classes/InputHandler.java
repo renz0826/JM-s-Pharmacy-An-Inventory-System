@@ -3,7 +3,6 @@ package com.example.classes;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -11,6 +10,24 @@ import java.util.Set;
 public class InputHandler {
 
     private static final Scanner SCAN = new Scanner(System.in);
+
+    // Private helper to check for EOF and exit gracefully
+    private static void checkForEof() {
+        if (!SCAN.hasNextLine()) {
+            System.out.println("\n[INFO] Input stream closed (EOF detected). Exiting...");
+            close();
+            System.exit(0); // Clean exit
+        }
+    }
+
+    /**
+     * Reads a line with EOF handling
+     */
+    private static String safeNextLine(String prompt) {
+        System.out.print(prompt);
+        checkForEof();
+        return SCAN.nextLine().trim();
+    }
 
     /**
      * Returns an integer based on the valid choices the user entered
@@ -24,10 +41,9 @@ public class InputHandler {
         int choice;
 
         while (true) {
-            String input = readInput("\nEnter Choice >> ");
-
             // Validate inputs
             try {
+                String input = readInput("\nEnter Choice >> ");
                 choice = Integer.parseInt(input); // Convert strings to int
 
                 // Checks if integer is one of the allowed choices
@@ -60,14 +76,12 @@ public class InputHandler {
         String input;
 
         while (true) {
-            System.out.print(prompt);
-            input = SCAN.nextLine();
-        
+            input = safeNextLine(prompt);
+
             if (input.isEmpty() && !allowEmpty) {
                 System.err.println("\n[ERROR]: Input cannot be empty");    
                 continue;
             }
-            input = input.trim();
             return input;
         }
     }
