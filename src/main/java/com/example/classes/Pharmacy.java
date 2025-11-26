@@ -24,6 +24,8 @@ public class Pharmacy extends Account {
     // CRUD Methods
     public void addMedicine() {
         // Prompt line and Input validation
+        UIManager.clearScreen();
+        System.out.println(AsciiTableBuilder.buildSingleRow("+ Add New Medicine +"));
         System.out.println("Instructions: Enter medicine details.");
         String name = InputHandler.readInput("Name >> ");
         double price = InputHandler.readDouble("Price (PHP) >> ");

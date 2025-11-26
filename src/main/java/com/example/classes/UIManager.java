@@ -116,6 +116,7 @@ class UIManager {
                 case PharmacyOperation.ADD_MEDICINE -> {
                     // --- SUB MENU LOOP ---
                     do {
+                        UIManager.clearScreen();
                         pharmacy.addMedicine(); // 1. Perform the action FIRST
                         UIManager.clearScreen();
                         String message = "Would you like to add another medicine? (y/n)";
@@ -130,6 +131,8 @@ class UIManager {
                     List<Medicine> medicines = pharmacy.getMedicines();
                     
                     do {
+                        UIManager.clearScreen();
+                        System.out.println(AsciiTableBuilder.buildSingleRow("+ Medicine Inventory +"));
                         displayMedicineTable(medicines);
                         MessageLog.displayNext();
 
@@ -156,6 +159,15 @@ class UIManager {
                 PharmacyOperation.DELETE_MEDICINE -> {
                     do {
                         List<Medicine> medicines = pharmacy.getMedicines();
+                        UIManager.clearScreen();
+                        // Display respective title
+                        if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_AMOUNT) {
+                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Medicine Amount +"));
+                        } else if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_PRICE) {
+                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Medicine Price +"));
+                        } else {
+                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Delete A Medicine +"));
+                        }
                         displayMedicineTable(medicines);
                         MessageLog.displayAll();
 
