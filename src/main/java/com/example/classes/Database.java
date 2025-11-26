@@ -42,7 +42,7 @@ public class Database {
 
             return paths;
         } catch (IOException e) {
-            MessageLog.addMessage("[ERROR]: " + getCustomersDatabasePath().toAbsolutePath() + " is missing!");
+            MessageLog.addError(getCustomersDatabasePath().toAbsolutePath() + " is missing!");
         }
 
         return null;
@@ -64,7 +64,7 @@ public class Database {
         try {
             Files.deleteIfExists(file);
         } catch (IOException e) {
-            MessageLog.addMessage("[ERROR]: File operation occured.");
+            MessageLog.addError("File operation occured.");
         }
 
         // remove tracking either way
@@ -89,7 +89,7 @@ public class Database {
         try {
             return objectMapper.readValue(filePath.toFile(), account);
         } catch (IOException e) {
-            MessageLog.addMessage("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
+            MessageLog.addError("Failed to parse JSON: " + filePath + " is empty or missing.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,14 +111,14 @@ public class Database {
                 // write to temp then atomically replace
                 objectMapper.writeValue(temporary.toFile(), data);
                 Files.move(temporary, permanent, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                MessageLog.addMessage("[SUCCESS]: " + permanent + " updated successfully!");
+                MessageLog.addSuccess(permanent + " updated successfully!");
             } else {
                 // new file: write directly
                 objectMapper.writeValue(permanent.toFile(), data);
-                MessageLog.addMessage("[SUCCESS]: " + permanent + " created successfully!");
+                MessageLog.addSuccess(permanent + " created successfully!");
             }
         } catch (IOException e) {
-            MessageLog.addMessage("[ERROR]: Failed to write file:\n" + e);
+            MessageLog.addError("Failed to write file:\n" + e);
             try { Files.deleteIfExists(permanent.resolveSibling(permanent.getFileName().toString() + ".tmp")); }
             catch (IOException ignored) {}
         }
@@ -128,7 +128,7 @@ public class Database {
         Path path = basePath.resolve(data.getName() + ".json");
 
         if (Files.exists(path)) {
-            MessageLog.addMessage("[ERROR]: " + path + " already exists!");
+            MessageLog.addError(path + " already exists!");
             return;
         }
 

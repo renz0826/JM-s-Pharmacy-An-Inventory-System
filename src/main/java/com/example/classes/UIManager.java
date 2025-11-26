@@ -143,10 +143,10 @@ class UIManager {
 
                         if (found == null) {
                             // Reset to original list if target medicines are not found
-                            MessageLog.addMessage("\n[SUCCESS]: No results found.");
+                            MessageLog.addSuccess("No results found.");
                             medicines = pharmacy.getMedicines();
                         } else {
-                            MessageLog.addMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
+                            MessageLog.addSuccess("Returned " + found.size() + " results.");
                             medicines = found;
                         }
                     } while (true);
@@ -185,7 +185,7 @@ class UIManager {
                         // do not allow double for position
                         String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)";
                         if (input.matches(doublePattern)) {
-                            MessageLog.addMessage("\n[ERROR]: Enter a valid position");
+                            MessageLog.addError("Enter a valid position");
                             continue;
                         }
 
@@ -198,13 +198,13 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Medicine> result = pharmacy.searchMedicine(input);
                             if (result == null) {
-                                MessageLog.addMessage("\n[SUCCESS]: No results found");
+                                MessageLog.addSuccess("No results found");
                             } else {
                                 medicines = result;
                             }
                             continue;
                         } catch (IndexOutOfBoundsException e) {
-                            MessageLog.addMessage("\n[ERROR]: Invalid Position.");
+                            MessageLog.addError("Invalid Position.");
                             continue;
                         }
 
@@ -262,10 +262,10 @@ class UIManager {
                         List<Customer> found = admin.searchCustomer(targetName);
 
                         if (found == null) {
-                            MessageLog.addMessage("\n[SUCCESS]: No results found.");
+                            MessageLog.addSuccess("No results found.");
                             customers = admin.getCustomers();
                         } else {
-                            MessageLog.addMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
+                            MessageLog.addSuccess("Returned " + found.size() + " results.");
                             customers = found;
                         }
                     } while (true);
@@ -299,7 +299,7 @@ class UIManager {
                         // do not allow double for position
                         String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)"; 
                         if (input.matches(doublePattern)) {
-                            MessageLog.addMessage("\n[ERROR]: Enter a valid position");
+                            MessageLog.addError("Enter a valid position");
                             continue;
                         }
                         
@@ -312,13 +312,13 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Customer> found = admin.searchCustomer(input);
                             if (found == null) { 
-                                MessageLog.addMessage("\n[SUCCESS]: No results found."); 
+                                MessageLog.addSuccess("No results found."); 
                                 customers = admin.getCustomers(); // reset the table
                             }
                             else { customers = found; }
                             continue;
                         } catch (IndexOutOfBoundsException e) {
-                            MessageLog.addMessage("\n[ERROR]: Invalid Position.");
+                            MessageLog.addError("Invalid Position.");
                             continue;
                         }
 
@@ -358,7 +358,7 @@ class UIManager {
 
     public static boolean retryLogin() {
         MessageLog.displayAll();
-        MessageLog.display("\n[ERROR]: Login failed.");
+        System.out.println("\nLogin failed.");
         System.out.println("Enter anything to try again or enter 'q' to exit.");
         String input = InputHandler.readInput("\nEnter Choice >> ", true);
         if (input.equals("q")) { return false; }

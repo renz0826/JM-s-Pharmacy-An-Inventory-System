@@ -71,7 +71,7 @@ public class Customer extends Account {
                     Medicine selectedMedicine = currentDisplayList.get(pos);
 
                     if (selectedMedicine.getAmount() <= 0) {
-                        MessageLog.addMessage("\n[ERROR]: Item is out of stock.");
+                        MessageLog.addError("Item is out of stock.");
                         continue;
                     }
 
@@ -79,14 +79,14 @@ public class Customer extends Account {
                     int quantity = InputHandler.readInt("\nUnits >> ");
 
                     if (quantity > selectedMedicine.getAmount()) {
-                        MessageLog.addMessage("\n[ERROR]: Only " + selectedMedicine.getAmount() + " units available.");
+                        MessageLog.addError("Only " + selectedMedicine.getAmount() + " units available.");
                         continue;
                     }
 
                     double totalCost = quantity * selectedMedicine.getPrice();
 
                     if (this.funds < totalCost) {
-                        MessageLog.addMessage("\n[ERROR]: Insufficient funds.");
+                        MessageLog.addError("Insufficient funds.");
                         continue;
                     }
 
@@ -127,17 +127,17 @@ public class Customer extends Account {
 
                         // 4. SAVE CUSTOMER (This uses getMedicines() to write the file)
                         Database.save(this);
-                        MessageLog.addMessage("\n[SUCCESS]: Purchased.");
+                        MessageLog.addSuccess("Purchased.");
                     }
-                } else { MessageLog.addMessage("\n[ERROR]: Invalid position."); }
+                } else { MessageLog.addError("Invalid position."); }
             } catch (NumberFormatException e) {
                 List<Medicine> searchResult = targetPharmacy.searchMedicine(input);
                 if (searchResult == null) {
-                    MessageLog.addMessage("\n[SUCCESS]: No results found.");
+                    MessageLog.addSuccess("No results found.");
                     currentDisplayList = targetPharmacy.getMedicines();
                     continue;
                 } else { 
-                    MessageLog.addMessage("[SUCCESS]: Found " + searchResult.size() + " results.");
+                    MessageLog.addSuccess("Found " + searchResult.size() + " results.");
                     currentDisplayList = searchResult; 
                     continue;
                 }

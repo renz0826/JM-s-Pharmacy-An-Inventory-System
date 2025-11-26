@@ -14,10 +14,10 @@ public class AuthService {
         if (admin == null) { return null; }
 
         if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
-            MessageLog.addMessage("[SUCCESS]: Admin authorized!");
+            MessageLog.addSuccess("Admin authorized!");
             return admin;
         } else {
-            MessageLog.addMessage("[ERROR]: Unauthorized!");
+            MessageLog.addError("Unauthorized!");
             return null;
         }
     }
@@ -29,10 +29,10 @@ public class AuthService {
         if (pharmacy == null) { return null; }
 
         if (pharmacy.getUsername().equals(username) && pharmacy.getPassword().equals(password)) {
-            MessageLog.addMessage("[SUCCESS]: Pharmacy authorized");
+            MessageLog.addSuccess("Pharmacy authorized");
             return pharmacy;
         } else {
-            MessageLog.addMessage("[ERROR]: Unauthorized");
+            MessageLog.addError("Unauthorized");
             return null;
         }
     }
@@ -52,7 +52,7 @@ public class AuthService {
                 }
 
                 if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
-                    MessageLog.addMessage("[SUCCESS]: Customer authorized.");
+                    MessageLog.addSuccess("Customer authorized.");
                     return customer;
                 }
             }
