@@ -79,6 +79,7 @@ class UIManager {
                     do {
                         // 1. Perform the action FIRST
                         customer.depositFunds();
+                        MessageLog.displayAll();
                         // 2. Then ask what to do next
                         System.out.println(AsciiTableBuilder.buildSingleRow("Would you like to deposit again? (y/n)"));
                         if (InputHandler.promptYesOrNo()) { continue; }
