@@ -2,6 +2,11 @@ package com.example.classes;
 
 import java.util.Set;
 
+/**
+ * A psuedo-enumeration class that contains static classes
+ * that represent a category of pseudo-enums for replacing magic numbers in UIManager
+ * 
+ */
 public class MenuOption {
     private static interface HasLogOut {
         static final int LOGOUT = 0;
