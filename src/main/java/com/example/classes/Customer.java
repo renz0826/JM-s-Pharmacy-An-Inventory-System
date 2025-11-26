@@ -45,14 +45,13 @@ public class Customer extends Account {
         String popUp = new AsciiTableBuilder()
                 .setHeader("+ Buy Medicine +")
                 .setRow("> Which medicine would you like to buy?")
-                .buildGenericPopUpMenu();
-        
-        // 3. Render the prompt table and start point of the operation
-        System.out.println(popUp);
-
+                .buildGenericPopUpMenu();        
+                
         List<Medicine> currentDisplayList = targetPharmacy.getMedicines();
-
         do {
+            // 3. Render the prompt table and start point of the operation
+            UIManager.clearScreen();
+            System.out.println(popUp);
             UIManager.displayMedicineTable(currentDisplayList);
             MessageLog.displayAll();
             System.out.println("\n--- Current Balance: Php " + getFunds() + " ---");
