@@ -89,7 +89,7 @@ public class Database {
         try {
             return objectMapper.readValue(filePath.toFile(), account);
         } catch (IOException e) {
-            ErrorMessage.queueMessage("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
+            MessageLog.addMessage("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
         } catch (Exception e) {
             e.printStackTrace();
         }

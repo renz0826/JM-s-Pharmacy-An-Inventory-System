@@ -60,7 +60,7 @@ public class Customer extends Account {
 
         do {
             UIManager.displayMedicineTable(currentDisplayList);
-            ErrorMessage.displayAll();
+            MessageLog.displayAll();
             System.out.println("\n--- Current Balance: Php " + getFunds() + " ---");
 
             System.out.println("\nInstructions: ");
@@ -77,7 +77,7 @@ public class Customer extends Account {
                     Medicine selectedMedicine = currentDisplayList.get(pos);
 
                     if (selectedMedicine.getAmount() <= 0) {
-                        ErrorMessage.queueMessage("\n[ERROR]: Item is out of stock.");
+                        MessageLog.addMessage("\n[ERROR]: Item is out of stock.");
                         continue;
                     }
 
@@ -85,14 +85,14 @@ public class Customer extends Account {
                     int quantity = InputHandler.readInt("\nUnits >> ");
 
                     if (quantity > selectedMedicine.getAmount()) {
-                        ErrorMessage.queueMessage("\n[ERROR]: Only " + selectedMedicine.getAmount() + " units available.");
+                        MessageLog.addMessage("\n[ERROR]: Only " + selectedMedicine.getAmount() + " units available.");
                         continue;
                     }
 
                     double totalCost = quantity * selectedMedicine.getPrice();
 
                     if (this.funds < totalCost) {
-                        ErrorMessage.queueMessage("\n[ERROR]: Insufficient funds.");
+                        MessageLog.addMessage("\n[ERROR]: Insufficient funds.");
                         continue;
                     }
 
@@ -133,17 +133,17 @@ public class Customer extends Account {
 
                         // 4. SAVE CUSTOMER (This uses getMedicines() to write the file)
                         Database.save(this);
-                        ErrorMessage.queueMessage("\n[SUCCESS]: Purchased.");
+                        MessageLog.addMessage("\n[SUCCESS]: Purchased.");
                     }
-                } else { ErrorMessage.queueMessage("\n[ERROR]: Invalid position."); }
+                } else { MessageLog.addMessage("\n[ERROR]: Invalid position."); }
             } catch (NumberFormatException e) {
                 List<Medicine> searchResult = targetPharmacy.searchMedicine(input);
                 if (searchResult == null) {
-                    ErrorMessage.queueMessage("\n[SUCCESS]: No results found.");
+                    MessageLog.addMessage("\n[SUCCESS]: No results found.");
                     currentDisplayList = targetPharmacy.getMedicines();
                     continue;
                 } else { 
-                    ErrorMessage.queueMessage("[SUCCESS]: Found " + searchResult.size() + " results.");
+                    MessageLog.addMessage("[SUCCESS]: Found " + searchResult.size() + " results.");
                     currentDisplayList = searchResult; 
                     continue;
                 }

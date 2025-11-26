@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // NOTE: Consider renaming this class to LogHandler to clarify that it handles log messages 
-public class ErrorMessage {
+public class MessageLog {
     // NOTE: Consider refactoring this into a Queue if message priority is truly necessary
     private static List<String> errorMessages = new ArrayList<>();
 
@@ -13,10 +13,8 @@ public class ErrorMessage {
      * 
      * @param message the error message to add
      */
-    public static void queueMessage(String message) {
-        if (!message.isEmpty()) {
-            errorMessages.add(message);
-        }
+    public static void addMessage(String message) {
+        if (!message.isEmpty()) { errorMessages.add(message); }
     }
 
     /**
@@ -37,7 +35,7 @@ public class ErrorMessage {
     }
 
     /**
-     * Method to display the next error message and removes it immediately
+     * Method to display the next error message and removes it immediately from the list
      * 
      */
     public static void displayNext() {

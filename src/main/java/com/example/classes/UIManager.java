@@ -53,7 +53,7 @@ class UIManager {
             }
         } while (account == null);
 
-        UIManager.routeToMenu(account);
+        UIManager.routeToAccountMenu(account);
     }
 
     public static void displayCustomerMenu(Customer customer) {
@@ -70,7 +70,7 @@ class UIManager {
             // Render table
             System.out.println(table);
             // Display any error messages
-            ErrorMessage.displayNext();
+            MessageLog.displayNext();
 
             // Get valid choices from user
             int choice = InputHandler.getValidChoice(CustomerOperation.getValues());
@@ -118,7 +118,7 @@ class UIManager {
             // Render table menu
             System.out.println(table);
             // Display any errors
-            ErrorMessage.displayAll();
+            MessageLog.displayAll();
 
             // Initialize choice
             int mainChoice = InputHandler.getValidChoice(PharmacyOperation.getValues());
@@ -147,7 +147,7 @@ class UIManager {
                     
                     do {
                         displayMedicineTable(medicines);
-                        ErrorMessage.displayNext();
+                        MessageLog.displayNext();
 
                         System.out.println("Search medicine by name or enter 'q' to exit.");
                         String targetName = InputHandler.readInput("Enter >> ");
@@ -156,10 +156,10 @@ class UIManager {
 
                         if (found == null) {
                             // Reset to original list if target medicines are not found
-                            ErrorMessage.queueMessage("\n[SUCCESS]: No results found.");
+                            MessageLog.addMessage("\n[SUCCESS]: No results found.");
                             medicines = pharmacy.getMedicines();
                         } else {
-                            ErrorMessage.queueMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
+                            MessageLog.addMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
                             medicines = found;
                         }
                     } while (true);
@@ -173,7 +173,7 @@ class UIManager {
                     do {
                         List<Medicine> medicines = pharmacy.getMedicines();
                         displayMedicineTable(medicines);
-                        ErrorMessage.displayAll();
+                        MessageLog.displayAll();
 
                         System.out.println("Instructions: ");
                         System.out.println("- Select medicine by entering its position number.");
@@ -189,7 +189,7 @@ class UIManager {
                         // do not allow double for position
                         String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)";
                         if (input.matches(doublePattern)) {
-                            ErrorMessage.queueMessage("\n[ERROR]: Enter a valid position");
+                            MessageLog.addMessage("\n[ERROR]: Enter a valid position");
                             continue;
                         }
 
@@ -202,13 +202,13 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Medicine> result = pharmacy.searchMedicine(input);
                             if (result == null) {
-                                ErrorMessage.queueMessage("\n[SUCCESS]: No results found");
+                                MessageLog.addMessage("\n[SUCCESS]: No results found");
                             } else {
                                 medicines = result;
                             }
                             continue;
                         } catch (IndexOutOfBoundsException e) {
-                            ErrorMessage.queueMessage("\n[ERROR]: Invalid Position.");
+                            MessageLog.addMessage("\n[ERROR]: Invalid Position.");
                             continue;
                         }
 
@@ -253,7 +253,7 @@ class UIManager {
             UIManager.clearScreen();
             // Print table and any error message
             System.out.println(table);
-            ErrorMessage.displayAll();
+            MessageLog.displayAll();
 
             // Valid choices
             int choice = InputHandler.getValidChoice(AdminOperation.getValues());
@@ -266,7 +266,7 @@ class UIManager {
                     do {
                         // display once
                         displayCustomerTable(customers);
-                        ErrorMessage.displayNext();
+                        MessageLog.displayNext();
 
                         System.out.println("Search customer by name or enter 'q' to exit.");
                         String targetName = InputHandler.readInput("Enter >> ");
@@ -274,10 +274,10 @@ class UIManager {
                         List<Customer> found = admin.searchCustomer(targetName);
 
                         if (found == null) {
-                            ErrorMessage.queueMessage("\n[SUCCESS]: No results found.");
+                            MessageLog.addMessage("\n[SUCCESS]: No results found.");
                             customers = admin.getCustomers();
                         } else {
-                            ErrorMessage.queueMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
+                            MessageLog.addMessage("\n[SUCCESS]: Returned " + found.size() + " results.");
                             customers = found;
                         }
                     } while (true);
@@ -290,7 +290,7 @@ class UIManager {
 
                     do {
                         displayCustomerTable(customers);
-                        ErrorMessage.displayNext();
+                        MessageLog.displayNext();
 
                         System.out.println("Instructions: ");
                         System.out.println("- Select a customer by entering its position number.");
@@ -304,7 +304,7 @@ class UIManager {
                         // do not allow double for position
                         String doublePattern = "-?(\\d*\\.\\d+|\\d+\\.\\d*)"; 
                         if (input.matches(doublePattern)) {
-                            ErrorMessage.queueMessage("\n[ERROR]: Enter a valid position");
+                            MessageLog.addMessage("\n[ERROR]: Enter a valid position");
                             continue;
                         }
                         
@@ -317,13 +317,13 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Customer> found = admin.searchCustomer(input);
                             if (found == null) { 
-                                ErrorMessage.queueMessage("\n[SUCCESS]: No results found."); 
+                                MessageLog.addMessage("\n[SUCCESS]: No results found."); 
                                 customers = admin.getCustomers(); // reset the table
                             }
                             else { customers = found; }
                             continue;
                         } catch (IndexOutOfBoundsException e) {
-                            ErrorMessage.queueMessage("\n[ERROR]: Invalid Position.");
+                            MessageLog.addMessage("\n[ERROR]: Invalid Position.");
                             continue;
                         }
 
@@ -412,7 +412,7 @@ class UIManager {
         System.out.println(AsciiTableBuilder.buildSingleRow("+ Login +"));
     }
 
-    public static void routeToMenu(Account account) {
+    public static void routeToAccountMenu(Account account) {
         // Call respective Account menu
         if (account instanceof Customer) {
             displayCustomerMenu((Customer) account);
@@ -424,7 +424,7 @@ class UIManager {
     }
 
     public static boolean retryLogin() {
-        ErrorMessage.display("\n[ERROR] Login failed.");
+        MessageLog.display("\n[ERROR] Login failed.");
         System.out.println("Enter anything to try again or enter 'q' to exit.");
         String input = InputHandler.readInput("\nEnter Choice >> ", true);
         if (input.equals("q")) { return false; }
