@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jmpharmacyims.classes.TextColor.Color;
 
 public class Customer extends Account {
+
     private List<Medicine> medicines;
     private double funds;
 
@@ -40,32 +41,31 @@ public class Customer extends Account {
         // 1. Check if Pharmacy can be loaded
         Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
 
-        if (targetPharmacy == null) return;
+        if (targetPharmacy == null) {
+            return;
+        }
 
-        // 2. Continue program if Pharmacy is ok
-        String popUp = new AsciiTableBuilder()
-                .setHeader("+ Buy Medicine +")
-                .setRow("> Which medicine would you like to buy?")
-                .buildGenericPopUpMenu();        
-                
         List<Medicine> currentDisplayList = targetPharmacy.getMedicines();
         do {
             // 3. Render the prompt table and start point of the operation
             UIManager.clearScreen();
-            System.out.println(popUp);
+            UIManager.displayPopUp("+ Buy Medicine +", "Which medicine would you like to buy?");
             UIManager.displayMedicineTable(currentDisplayList);
             MessageLog.displayAll();
-            System.out.println("\n--- Current Balance: Php " + getFunds() + " ---");
+            System.out.println(TextColor.apply("\n[ Current Balance: Php " + getFunds() + " ]", Color.WHITE));
 
             String instructions = """
                     \nInstructions: 
-                    - Select medicine by entering its ** position number **.
-                    - Search medicine by name or enter 'q' to exit.
+                    - Select medicine by entering its **position number**.
+                    - Search medicine by name.
+                    - Enter 'q' to exit
                     """;
             System.out.println(TextColor.apply(instructions, Color.LIGHT_YELLOW));
-            String input = InputHandler.readInput("\nEnter input: >> ");
+            String input = InputHandler.readInput("Enter input: >> ");
 
-            if (input.equalsIgnoreCase("q")) return;
+            if (input.equalsIgnoreCase("q")) {
+                return;
+            }
 
             try {
                 int pos = Integer.parseInt(input);
@@ -83,6 +83,9 @@ public class Customer extends Account {
 
                     if (quantity > selectedMedicine.getAmount()) {
                         MessageLog.addError("Only " + selectedMedicine.getAmount() + " units available.");
+                        continue;
+                    } else if (quantity <= 0) {
+                        MessageLog.addError("Quantity cannot be 0.");
                         continue;
                     }
 
@@ -130,18 +133,30 @@ public class Customer extends Account {
 
                         // 4. SAVE CUSTOMER (This uses getMedicines() to write the file)
                         Database.save(this);
-                        MessageLog.addSuccess("Purchased.");
+
+                        String unitsOf;
+
+                        if (quantity == 1) {
+                            unitsOf = " unit of ";
+                        } else {
+                            unitsOf = " units of ";
+                        }
+
+                        MessageLog.addSuccess(quantity + unitsOf + selectedMedicine.getName() + " has been successfully bought for Php " + totalCost
+                        );
                     }
-                } else { MessageLog.addError("Invalid position."); }
+                } else {
+                    MessageLog.addError("Invalid position.");
+                }
             } catch (NumberFormatException e) {
                 List<Medicine> searchResult = targetPharmacy.searchMedicine(input);
                 if (searchResult == null) {
-                    MessageLog.addSuccess("No results found.");
+                    MessageLog.addError("No results found.");
                     currentDisplayList = targetPharmacy.getMedicines();
                     continue;
-                } else { 
+                } else {
                     MessageLog.addSuccess("Found " + searchResult.size() + " results.");
-                    currentDisplayList = searchResult; 
+                    currentDisplayList = searchResult;
                     continue;
                 }
             }
@@ -159,22 +174,25 @@ public class Customer extends Account {
             UIManager.displayMedicineTable(myMedicines);
         }
 
-        // Pause
         System.out.print("\n(Press Enter to return to menu)");
         InputHandler.readInput("", true);
     }
 
     public void depositFunds() {
         UIManager.clearScreen();
-        String popUp = new AsciiTableBuilder()
-                .setHeader("+ Deposit Funds +")
-                .setRow("> How much would you like to deposit?")
-                .buildGenericPopUpMenu();
-        System.out.println(popUp);
+        UIManager.displayPopUp("+ Deposit Funds +", "How much would you like to deposit?");
 
-        this.funds += InputHandler.readDouble("Enter amount >> ");
+        double amount = InputHandler.readDouble("\nEnter amount >> ");
 
-        System.out.println("Funds: " + getFunds());
+        UIManager.loading("Processing transaction");
+
+        MessageLog.addSuccess("Php " + amount + " has been successfully added in your account.");
+
+        this.funds += amount;
+
+        MessageLog.displayNext();
+
+        System.out.println(TextColor.apply("\nCurrent Balance: Php " + getFunds(), Color.WHITE) + "\n");
 
         Database.save(this);
     }
@@ -183,9 +201,11 @@ public class Customer extends Account {
     public void setName(String name) {
         this.name = name;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
