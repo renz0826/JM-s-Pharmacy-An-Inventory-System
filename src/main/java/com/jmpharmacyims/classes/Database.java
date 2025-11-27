@@ -1,4 +1,4 @@
-package com.example.classes;
+package com.jmpharmacyims.classes;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -13,7 +13,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 public class Database {
     private static Path customersDatabasePath = Path.of("accounts", "customers");
@@ -43,7 +42,7 @@ public class Database {
 
             return paths;
         } catch (IOException e) {
-            e.printStackTrace();
+            MessageLog.addError(getCustomersDatabasePath().toAbsolutePath() + " is missing!");
         }
 
         return null;
@@ -65,7 +64,7 @@ public class Database {
         try {
             Files.deleteIfExists(file);
         } catch (IOException e) {
-            System.err.println("[ERROR]: File operation occured.");
+            MessageLog.addError("File operation occured.");
         }
 
         // remove tracking either way
@@ -89,8 +88,8 @@ public class Database {
     private static <T extends Account> T deserialize(Path filePath, Class<T> account) {
         try {
             return objectMapper.readValue(filePath.toFile(), account);
-        } catch (MismatchedInputException e) {
-            System.err.println("[ERROR]: Failed to parse JSON: " + filePath + " is empty or missing.");
+        } catch (IOException e) {
+            MessageLog.addError("Failed to parse JSON: " + filePath + " is empty or missing.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,29 +99,28 @@ public class Database {
 
     // Method to safely write changes to file
     private static void serialize(Account data, Path permanent) {
-        Path temporary = permanent.resolveSibling(".tmp");
-
         try {
-            // Ensure directory exists
-            if (permanent.getParent() != null)
-                Files.createDirectories(permanent.getParent());
+            // System.out.println("path=" + permanent + " exists=" + Files.exists(permanent) + " isRegularFile=" + Files.isRegularFile(permanent));
+            if (permanent.getParent() != null) Files.createDirectories(permanent.getParent());
 
-            boolean exists = Files.exists(permanent);
+            boolean exists = Files.isRegularFile(permanent);
+
+            Path temporary = permanent.resolveSibling(permanent.getFileName().toString() + ".tmp");
 
             if (exists) {
-                // SAFE UPDATE: temp + atomic move
+                // write to temp then atomically replace
                 objectMapper.writeValue(temporary.toFile(), data);
-                Files.move(temporary, permanent, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(temporary, permanent, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                MessageLog.addSuccess(permanent + " updated successfully!");
             } else {
-                // NEW FILE: write directly
+                // new file: write directly
                 objectMapper.writeValue(permanent.toFile(), data);
+                MessageLog.addSuccess(permanent + " created successfully!");
             }
-
-            System.out.println("Data successfully written to " + permanent.toAbsolutePath());
-
         } catch (IOException e) {
-            System.err.println("[ERROR]: Failed to write file:\n" + e);
-            try { Files.deleteIfExists(temporary); } catch (IOException ignored) {}
+            MessageLog.addError("Failed to write file:\n" + e);
+            try { Files.deleteIfExists(permanent.resolveSibling(permanent.getFileName().toString() + ".tmp")); }
+            catch (IOException ignored) {}
         }
     }
 
@@ -130,16 +128,11 @@ public class Database {
         Path path = basePath.resolve(data.getName() + ".json");
 
         if (Files.exists(path)) {
-            System.err.println("[ERROR]: " + path + " already exists!");
+            MessageLog.addError(path + " already exists!");
             return;
         }
 
-        try {
-            Files.createFile(path);
-            serialize(data, path);
-        } catch (IOException e) {
-            System.err.println("[ERROR]: Cannot create " + path);
-        }
+        serialize(data, path);
     }
 
     // Getters

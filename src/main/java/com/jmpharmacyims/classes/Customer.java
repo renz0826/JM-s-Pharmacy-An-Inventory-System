@@ -1,19 +1,13 @@
-package com.example.classes;
+package com.jmpharmacyims.classes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import de.vandermeer.asciitable.AT_Cell;
-import de.vandermeer.asciitable.AsciiTable;
-import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
+import com.jmpharmacyims.classes.TextColor.Color;
 
 public class Customer extends Account {
-
-    private static AsciiTable at;
-
     private List<Medicine> medicines;
     private double funds;
 
@@ -43,46 +37,35 @@ public class Customer extends Account {
 
     // -----------------------------------------------------------
     public void buyMedicine() {
-        at = new AsciiTable();
-        at.addRule();
-        at.addRow("+ Buy Medicine +");
-        at.setTextAlignment(TextAlignment.CENTER);
-        at.addRule();
-        AT_Cell cell = at.addRow("> Which medicine would you like to buy?").getCells().get(0);
-        cell.getContext().setPadding(1).setPaddingLeft(7);
-        cell.getContext().setTextAlignment(TextAlignment.LEFT);
-        at.addRule();
-        String rend = at.render();
-        System.out.println(rend);
-
-        // 1. Load the specific Pharmacy instance
+        // 1. Check if Pharmacy can be loaded
         Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
 
-        if (targetPharmacy == null) {
-            System.out.println("[ERROR]: Failed to load Jm Pharmacy data.");
-            return;
-        }
+        if (targetPharmacy == null) return;
 
+        // 2. Continue program if Pharmacy is ok
+        String popUp = new AsciiTableBuilder()
+                .setHeader("+ Buy Medicine +")
+                .setRow("> Which medicine would you like to buy?")
+                .buildGenericPopUpMenu();        
+                
         List<Medicine> currentDisplayList = targetPharmacy.getMedicines();
-
         do {
-            System.out.println("\n--- Current Balance: $" + this.funds + " ---");
+            // 3. Render the prompt table and start point of the operation
+            UIManager.clearScreen();
+            System.out.println(popUp);
             UIManager.displayMedicineTable(currentDisplayList);
-
-            UIManager.buyMedicineUI();
-
-            UIManager.displayMedicineTable(currentDisplayList);
+            MessageLog.displayAll();
             System.out.println("\n--- Current Balance: Php " + getFunds() + " ---");
 
-            System.out.println("\nInstructions: ");
-            System.out.println("- Select medicine by entering its ** position number **.");
-            System.out.println("- Search medicine by name or enter 'q' to exit.");
-
+            String instructions = """
+                    \nInstructions: 
+                    - Select medicine by entering its ** position number **.
+                    - Search medicine by name or enter 'q' to exit.
+                    """;
+            System.out.println(TextColor.apply(instructions, Color.LIGHT_YELLOW));
             String input = InputHandler.readInput("\nEnter input: >> ");
 
-            if (input.equalsIgnoreCase("q")) {
-                break;
-            }
+            if (input.equalsIgnoreCase("q")) return;
 
             try {
                 int pos = Integer.parseInt(input);
@@ -91,7 +74,7 @@ public class Customer extends Account {
                     Medicine selectedMedicine = currentDisplayList.get(pos);
 
                     if (selectedMedicine.getAmount() <= 0) {
-                        System.out.println("\n[ERROR]: Item is out of stock.");
+                        MessageLog.addError("Item is out of stock.");
                         continue;
                     }
 
@@ -99,14 +82,14 @@ public class Customer extends Account {
                     int quantity = InputHandler.readInt("\nUnits >> ");
 
                     if (quantity > selectedMedicine.getAmount()) {
-                        System.out.println("\n[ERROR]: Only " + selectedMedicine.getAmount() + " units available.");
+                        MessageLog.addError("Only " + selectedMedicine.getAmount() + " units available.");
                         continue;
                     }
 
                     double totalCost = quantity * selectedMedicine.getPrice();
 
                     if (this.funds < totalCost) {
-                        System.out.println("\n[ERROR]: Insufficient funds.");
+                        MessageLog.addError("Insufficient funds.");
                         continue;
                     }
 
@@ -147,74 +130,27 @@ public class Customer extends Account {
 
                         // 4. SAVE CUSTOMER (This uses getMedicines() to write the file)
                         Database.save(this);
-
-                        System.out.println("\n[SUCCESS]: Purchased.");
-                        break;
+                        MessageLog.addSuccess("Purchased.");
                     }
-                } else {
-                    System.out.println("\n[ERROR]: Invalid position.");
-                }
+                } else { MessageLog.addError("Invalid position."); }
             } catch (NumberFormatException e) {
                 List<Medicine> searchResult = targetPharmacy.searchMedicine(input);
                 if (searchResult == null) {
-                    System.out.println("\nNo results found.");
+                    MessageLog.addSuccess("No results found.");
                     currentDisplayList = targetPharmacy.getMedicines();
-                } else {
-                    currentDisplayList = searchResult;
+                    continue;
+                } else { 
+                    MessageLog.addSuccess("Found " + searchResult.size() + " results.");
+                    currentDisplayList = searchResult; 
+                    continue;
                 }
             }
         } while (true);
-
     }
 
     public void viewAccountDetails() {
-        UIManager.clear();
-        // ==========================================
-        // PART 1: The Title (1 Column Table)
-        // ==========================================
-        AsciiTable titleTable = new AsciiTable();
-        titleTable.addRule();
-        titleTable.addRow("+ Account Details +");
-        titleTable.setTextAlignment(TextAlignment.CENTER);
-        System.out.println(titleTable.render());
-
-        // ==========================================
-        // PART 2: The Data (2 Column Table)
-        // ==========================================
-        at = new AsciiTable(); // <--- CRITICAL: Create a NEW table for 2 columns
-
-        at.addRule();
-        at.addRow("Name", this.getName());
-        at.addRule();
-        at.addRow("Username", this.getUsername());
-        at.addRule();
-        at.addRow("Current Balance", String.format("PHP %,.2f", this.funds));
-        at.addRule();
-
-        // Styling for Data
-        at.setTextAlignment(TextAlignment.LEFT);
-        at.setPadding(1);
-
-        System.out.println(at.render());
-        System.out.println();
-
-        // ==========================================
-        // PART 3: Medicine Cabinet Header (1 Column)
-        // ==========================================
-        AsciiTable headerTable = new AsciiTable();
-
-        headerTable.addRule();
-        headerTable.addRow("+ Medicine Cabinet +");
-        headerTable.setTextAlignment(TextAlignment.CENTER);
-        headerTable.addRule();
-
-        headerTable.getContext().setWidth(166);
-
-        System.out.println(headerTable.render());
-
-        // ==========================================
-        // PART 4: Inventory List
-        // ==========================================
+        UIManager.clearScreen();
+        UIManager.displayCustomerAccountDetails(this);
         List<Medicine> myMedicines = getMedicines();
 
         if (myMedicines == null || myMedicines.isEmpty()) {
@@ -229,24 +165,14 @@ public class Customer extends Account {
     }
 
     public void depositFunds() {
-        UIManager.clear();
-        at = new AsciiTable();
+        UIManager.clearScreen();
+        String popUp = new AsciiTableBuilder()
+                .setHeader("+ Deposit Funds +")
+                .setRow("> How much would you like to deposit?")
+                .buildGenericPopUpMenu();
+        System.out.println(popUp);
 
-        at.addRule();
-        at.addRow("+ Deposit Funds +");
-        at.setTextAlignment(TextAlignment.CENTER);
-        at.addRule();
-        AT_Cell cell = at.addRow("> How much would you like to deposit?").getCells().get(0);
-        cell.getContext().setPadding(1).setPaddingLeft(7);
-        cell.getContext().setTextAlignment(TextAlignment.LEFT);
-        at.addRule();
-        String rend = at.render();
-
-        System.out.println(rend);
-
-        double value = InputHandler.readDouble("");
-
-        this.funds += value;
+        this.funds += InputHandler.readDouble("Enter amount >> ");
 
         System.out.println("Funds: " + getFunds());
 

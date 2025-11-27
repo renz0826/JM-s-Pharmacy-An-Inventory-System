@@ -1,4 +1,4 @@
-package com.example.classes;
+package com.jmpharmacyims.classes;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,16 +10,14 @@ public class AuthService {
     public static Admin logInAdmin(String username, String password) {
         Admin admin = Database.load(Database.getAdminFilePath(), Admin.class);
         
-        if (admin == null) {
-            System.out.println("Error occured");
-            return null;
-        }
+        // Propagate null
+        if (admin == null) { return null; }
 
         if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
-            System.out.println("Admin authorized");
+            MessageLog.addSuccess("Admin authorized!");
             return admin;
         } else {
-            System.out.println("Unauthorized");
+            MessageLog.addError("Unauthorized!");
             return null;
         }
     }
@@ -27,38 +25,51 @@ public class AuthService {
     public static Pharmacy logInPharmacy(String username, String password) {
         Pharmacy pharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
         
-        if (pharmacy == null) {
-            System.out.println("Error occured");
-            return null;
-        }
+        // Propagate null
+        if (pharmacy == null) { return null; }
 
         if (pharmacy.getUsername().equals(username) && pharmacy.getPassword().equals(password)) {
-            System.out.println("Pharmacy authorized");
+            MessageLog.addSuccess("Pharmacy authorized");
             return pharmacy;
         } else {
-            System.out.println("Unauthorized");
+            MessageLog.addError("Unauthorized");
             return null;
         }
     }
 
     public static Customer logInCustomer(String username, String password) {
         customerFiles = Database.getCustomerJsonFileList();
+
+        // Propagate null
+        if (customerFiles == null) { return null; }
+
         Customer customer;
         for (Path path : customerFiles) {
             if (Files.isRegularFile(path)) {
                 customer = Database.load(path, Customer.class);
                 if (customer == null) {
-                    System.out.println("Error occured");
                     return null;
                 }
 
                 if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
-                    System.out.println("Customer authorized");
+                    MessageLog.addSuccess("Customer authorized.");
                     return customer;
                 }
             }
         }
         
         return null;
+    }
+
+    public static Account verifyCredentials(String username, String password, int accountChoice) {
+        return switch (accountChoice) {
+            case MenuOption.AccountType.CUSTOMER ->
+                AuthService.logInCustomer(username, password);
+            case MenuOption.AccountType.PHARMACY ->
+                AuthService.logInPharmacy(username, password);
+            case MenuOption.AccountType.ADMIN ->
+                AuthService.logInAdmin(username, password);
+            default -> null;
+        };
     }
 }
