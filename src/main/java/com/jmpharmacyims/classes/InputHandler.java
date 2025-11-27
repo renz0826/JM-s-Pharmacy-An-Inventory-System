@@ -8,10 +8,9 @@ import java.util.Set;
 
 import com.jmpharmacyims.classes.TextColor.Color;
 
-import java.lang.Math;
-
 // This class handles user input and input validation
 public class InputHandler {
+
     private static final Scanner SCAN = new Scanner(System.in);
     private static String errorLabel = TextColor.apply("\n[ERROR]: ", Color.LIGHT_RED);
 
@@ -19,8 +18,8 @@ public class InputHandler {
     private static void checkForEof() {
         if (!SCAN.hasNextLine()) {
             System.out.println(
-                TextColor.apply("\n[INFO]: ", Color.LIGHT_YELLOW) + 
-                "Input stream closed (EOF detected). Exiting...");
+                    TextColor.apply("\n[INFO]: ", Color.LIGHT_YELLOW)
+                    + "Input stream closed (EOF detected). Exiting...");
             close();
             System.exit(0); // Clean exit
         }
@@ -37,9 +36,9 @@ public class InputHandler {
 
     /**
      * Returns an integer based on the valid choices the user entered
-     * 
+     *
      * Prompts the user to enter a valid choice. Empty inputs are not allowed.
-     *  
+     *
      * @param validChoices the set of available choices
      * @return the valid choice as integer
      */
@@ -68,11 +67,12 @@ public class InputHandler {
      * Reads a line of input from the user.
      *
      * Prompts the user with the given message and repeatedly reads input until
-     * a string is provided. Input is trimmed of leading and trailing
-     * whitespace before being returned.
+     * a string is provided. Input is trimmed of leading and trailing whitespace
+     * before being returned.
      *
      * @param prompt the message displayed to the user before reading input
-     * @param allowEmpty boolean value whether to allow empty input or not, it is false by default (not specified)
+     * @param allowEmpty boolean value whether to allow empty input or not, it
+     * is false by default (not specified)
      * @return a trimmed string entered by the user
      */
     public static String readInput(String prompt, boolean allowEmpty) {
@@ -82,7 +82,7 @@ public class InputHandler {
             input = safeNextLine(prompt);
 
             if (input.isEmpty() && !allowEmpty) {
-                System.err.println(errorLabel + "Input cannot be empty");    
+                System.err.println(errorLabel + "Input cannot be empty");
                 continue;
             }
             return input;
@@ -91,12 +91,13 @@ public class InputHandler {
 
     /**
      * Reads a non-empty line of input from the user
+     *
      * @see #readInput(String, boolean)
      */
     public static String readInput(String prompt) {
         return readInput(prompt, false);
     }
-    
+
     /**
      * Reads an integer from the user.
      *
@@ -136,6 +137,7 @@ public class InputHandler {
 
     /**
      * Reads a non-negative integer from the user.
+     *
      * @see #readInt(String, boolean)
      */
     public static int readInt(String prompt) {
@@ -170,7 +172,7 @@ public class InputHandler {
                     continue;
                 }
 
-                return Math.round(d * 100.0) / 100.0;
+                return Math.round(d * 100.00) / 100.00;
             } catch (NumberFormatException e) {
                 System.err.println(errorLabel + "Input must be a number.");
             } catch (Exception e) {
@@ -215,21 +217,25 @@ public class InputHandler {
         }
     }
 
-
     /**
      * Returns true if the user inputs 'y' and false if 'n'.
-     * 
-     * Prompts the user a (y/n) input and compares against those characters (case-insensitive).
-     * Valid inputs are either Y or N. Empty inputs are not allowed
-     * 
+     *
+     * Prompts the user a (y/n) input and compares against those characters
+     * (case-insensitive). Valid inputs are either Y or N. Empty inputs are not
+     * allowed
+     *
      * @return true if y, false if n
      */
     public static boolean promptYesOrNo() {
         do {
-            String confirmation = readInput("(y/n) >> ");
-            if (confirmation.equalsIgnoreCase("y")) return true;
-            else if (confirmation.equalsIgnoreCase("n")) return false;
-            else continue;
+            String confirmation = readInput("\n(y/n) >> ");
+            if (confirmation.equalsIgnoreCase("y")) {
+                return true;
+            } else if (confirmation.equalsIgnoreCase("n")) {
+                return false;
+            } else {
+                continue;
+            }
         } while (true);
     }
 
