@@ -38,7 +38,7 @@ public class Admin extends Account {
         Customer newCustomer = new Customer(name, username, password, medicines, 0);
         Database.createNew(newCustomer);
         UIManager.loading("Registering customer");
-        Database.loadCustomers(); // refresh the list so the new accounts are included
+        customers = Database.loadCustomers(); // refresh the list so the new accounts are included
     }
 
     // READ
@@ -94,7 +94,7 @@ public class Admin extends Account {
         Customer customer = getCustomer(targetName);
         customers.remove(customer);
         Database.delete(customer);
-        Database.loadCustomers();
+        customers = Database.loadCustomers();
 
         UIManager.loading("Deleting customer");
         MessageLog.logSuccess(targetName + "'s account has been successfully deleted.");
