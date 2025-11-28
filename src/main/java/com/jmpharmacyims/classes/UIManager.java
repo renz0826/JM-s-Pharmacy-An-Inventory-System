@@ -34,6 +34,8 @@ class UIManager {
             // ask user which account to login
             int accountChoice = InputHandler.getValidChoice(AccountType.getValues());
             if (accountChoice == MenuOption.AccountType.LOGOUT) {
+                UIManager.loading("Exiting Program");
+                System.out.println();
                 break;
             }
             UIManager.login(accountChoice);
@@ -61,7 +63,7 @@ class UIManager {
                 }
             }
         } while (account == null);
-
+        UIManager.loading("Logging in");
         UIManager.routeToAccountMenu(account);
     }
 
@@ -89,9 +91,10 @@ class UIManager {
                 case CustomerOperation.DEPOSIT_FUNDS -> {
                     boolean stayingInAddMenu = true;
                     do {
-                        // 1. Perform the action FIRST
+
                         customer.depositFunds();
-                        // 2. Then ask what to do next
+
+                        System.err.println();
                         System.out.println(AsciiTableBuilder.buildSingleRow("Would you like to deposit again? (y/n)"));
                         if (InputHandler.promptYesOrNo()) {
                             continue;
@@ -101,7 +104,7 @@ class UIManager {
                     } while (stayingInAddMenu);
                 }
                 case CustomerOperation.LOGOUT -> {
-                    System.out.println("\nExiting...");
+                    UIManager.loading("Logging out");
                     continueMenuLoop = false;
                 }
             }
@@ -127,20 +130,18 @@ class UIManager {
             // Handle Main Menu Actions
             switch (mainChoice) {
                 case PharmacyOperation.LOGOUT -> {
-                    System.out.println("\nLogging out...");
+                    UIManager.loading("Logging out");
                     continueMenuLoop = false;
                 }
                 case PharmacyOperation.ADD_MEDICINE -> {
-                    // --- SUB MENU LOOP ---
                     do {
                         UIManager.clearScreen();
-                        pharmacy.addMedicine(); // 1. Perform the action FIRST
-                        UIManager.clearScreen();
+                        pharmacy.addMedicine(); // Perform the action FIRST
                         String message = "Would you like to add another medicine? (y/n)";
                         System.out.println(AsciiTableBuilder.buildSingleRow(message));
 
                         if (InputHandler.promptYesOrNo()) {
-                            continue; // 2. Then ask what to do next
+                            continue;
                         } else {
                             break;
                         }
@@ -152,12 +153,14 @@ class UIManager {
 
                     do {
                         UIManager.clearScreen();
-                        System.out.println(AsciiTableBuilder.buildSingleRow("+ Medicine Inventory +"));
+                        UIManager.displayTitle("+ Medicine Inventory +");
                         displayMedicineTable(medicines);
                         MessageLog.displayNext();
 
-                        System.out.println("Search medicine by name or enter 'q' to exit.");
-                        String targetName = InputHandler.readInput("Enter >> ");
+                        System.out.println(TextColor.apply("\nSearch Instructions: ", Color.WHITE));
+                        System.out.println(TextColor.apply("- Search medicine by name", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
+                        String targetName = InputHandler.readInput("\nEnter >> ");
                         if (targetName.equalsIgnoreCase("q")) {
                             break;
                         }
@@ -165,7 +168,7 @@ class UIManager {
 
                         if (found == null) {
                             // Reset to original list if target medicines are not found
-                            MessageLog.addSuccess("No results found.");
+                            MessageLog.addError("No results found.");
                             medicines = pharmacy.getMedicines();
                         } else {
                             MessageLog.addSuccess("Returned " + found.size() + " results.");
@@ -181,20 +184,21 @@ class UIManager {
                         UIManager.clearScreen();
                         // Display respective title
                         if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_AMOUNT) {
-                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Medicine Amount +"));
+                            UIManager.displayTitle("+ Update Medicine Amount +");
                         } else if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_PRICE) {
-                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Medicine Price +"));
+                            UIManager.displayTitle("+ Update Medicine Price +");
                         } else {
-                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Delete A Medicine +"));
+                            UIManager.displayTitle("+ Delete a Medicine +");
                         }
                         displayMedicineTable(medicines);
                         MessageLog.displayAll();
 
-                        System.out.println("Instructions: ");
-                        System.out.println("- Select medicine by entering its position number.");
-                        System.out.println("- Search medicine by name or enter 'q' to exit.");
+                        System.out.println(TextColor.apply("\nSelect Instructions: ", Color.WHITE));
+                        System.out.println(TextColor.apply("- Select medicine by entering its position number.", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Select medicine by name", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
 
-                        String input = InputHandler.readInput("Enter input >> ");
+                        String input = InputHandler.readInput("\nEnter input >> ");
 
                         // exit if quit
                         if (input.equalsIgnoreCase("q")) {
@@ -217,7 +221,7 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Medicine> result = pharmacy.searchMedicine(input);
                             if (result == null) {
-                                MessageLog.addSuccess("No results found");
+                                MessageLog.addError("No results found");
                             } else {
                                 medicines = result;
                             }
@@ -228,18 +232,22 @@ class UIManager {
                         }
 
                         if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_AMOUNT) {
-                            int amount = InputHandler.readInt("Enter amount >> ", true);
+                            int amount = InputHandler.readInt("\nEnter amount >> ", true);
                             pharmacy.updateMedicineAmount(targetName, amount);
+                            MessageLog.addSuccess(targetName + "\'s amount has been successfully updated to " + amount + ".");
                         } else if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_PRICE) {
-                            double amount = InputHandler.readDouble("Enter new price >> ");
+                            double amount = InputHandler.readDouble("\nEnter new price >> ");
                             pharmacy.updateMedicinePrice(targetName, amount);
+                            MessageLog.addSuccess(targetName + "\'s price has been successfully updated to " + amount + ".");
                         } else {
                             String message = "Are you sure you want to delete " + targetName + "? (y/n)";
+                            System.err.println();
                             System.out.println(AsciiTableBuilder.buildSingleRow(message));
 
                             // 2. Prompt user choice
                             if (InputHandler.promptYesOrNo()) {
                                 pharmacy.deleteMedicine(targetName);
+                                MessageLog.addSuccess(targetName + " has been successfully deleted.");
                             }
 
                             // 3. Update list
@@ -274,19 +282,21 @@ class UIManager {
 
                     do {
                         UIManager.clearScreen();
-                        System.out.println(AsciiTableBuilder.buildSingleRow("+ List Of Registered Customer Accounts +"));
+                        UIManager.displayTitle("+ List Of Registered Customer Accounts +");
                         displayCustomerTable(customers);
                         MessageLog.displayNext();
 
-                        System.out.println("Search customer by name or enter 'q' to exit.");
-                        String targetName = InputHandler.readInput("Enter >> ");
+                        System.out.println(TextColor.apply("\nSearch Instructions: ", Color.WHITE));
+                        System.out.println(TextColor.apply("- Search customer by name", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
+                        String targetName = InputHandler.readInput("\nEnter >> ");
                         if (targetName.equalsIgnoreCase("q")) {
                             break;
                         }
                         List<Customer> found = admin.searchCustomer(targetName);
 
                         if (found == null) {
-                            MessageLog.addSuccess("No results found.");
+                            MessageLog.addError("No results found.");
                             customers = admin.getCustomers();
                         } else {
                             MessageLog.addSuccess("Returned " + found.size() + " results.");
@@ -302,18 +312,19 @@ class UIManager {
                         UIManager.clearScreen();
                         // Display respective operation title
                         if (choice == AdminOperation.UPDATE_CUSTOMER_CREDENTIALS) {
-                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Customer Credentials +"));
+                            UIManager.displayTitle("+ Update Customer Credentials +");
                         } else {
-                            System.out.println(AsciiTableBuilder.buildSingleRow("+ Remove A Customer Account +"));
+                            UIManager.displayTitle("+ Remove A Customer Account +");
                         }
                         displayCustomerTable(customers);
                         MessageLog.displayNext();
 
-                        System.out.println("Instructions: ");
-                        System.out.println("- Select a customer by entering its position number.");
-                        System.out.println("- Search customer by name or enter 'q' to exit.");
+                        System.out.println(TextColor.apply("\nSelect Instructions: ", Color.WHITE));
+                        System.out.println(TextColor.apply("- Select a customer by entering its position number.", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Select customer by name", Color.LIGHT_YELLOW));
+                        System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
 
-                        String input = InputHandler.readInput("Enter input >> ");
+                        String input = InputHandler.readInput("\nEnter input >> ");
 
                         // exit if quit
                         if (input.equalsIgnoreCase("q")) {
@@ -336,7 +347,7 @@ class UIManager {
                         } catch (NumberFormatException e) {
                             List<Customer> found = admin.searchCustomer(input);
                             if (found == null) {
-                                MessageLog.addSuccess("No results found.");
+                                MessageLog.addError("No results found.");
                                 customers = admin.getCustomers(); // reset the table
                             } else {
                                 customers = found;
@@ -351,6 +362,7 @@ class UIManager {
                             admin.updateCustomerDetails(targetName);
                         } else {
                             String message = "Are you sure you want to delete " + targetName + "? (y/n)";
+                            System.err.println();
                             System.out.println(AsciiTableBuilder.buildSingleRow(message));
                             if (InputHandler.promptYesOrNo()) {
                                 admin.deleteCustomer(targetName);
@@ -361,11 +373,11 @@ class UIManager {
                 }
                 case AdminOperation.UPDATE_PHARMACY_CREDENTIALS -> {
                     UIManager.clearScreen();
-                    System.out.println(AsciiTableBuilder.buildSingleRow("+ Update Pharmacy Credentials +"));
+                    UIManager.displayTitle("+ Update Pharmacy Credentials +");
                     admin.updatePharmacyDetails();
                 }
                 case AdminOperation.LOGOUT -> {
-                    System.out.println("\nExiting...");
+                    UIManager.loading("Logging out");
                     continueMenuLoop = false;
                 }
             }
@@ -385,8 +397,9 @@ class UIManager {
 
     public static boolean retryLogin() {
         MessageLog.displayAll();
-        System.out.println("\nLogin failed.");
-        System.out.println("Enter anything to try again or enter 'q' to exit.");
+        MessageLog.addError("Login failed.");
+        System.out.println(TextColor.apply("\n- Enter anything to continue", Color.LIGHT_YELLOW));
+        System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
         String input = InputHandler.readInput("\nEnter Choice >> ", true);
         if (input.equals("q")) {
             return false;
@@ -530,12 +543,13 @@ class UIManager {
     }
 
     public static void loading(String label) {
-        System.out.print("\n" + label);
-        UIManager.delay(500);
-        System.out.print(".");
-        UIManager.delay(500);
-        System.out.print(".");
-        UIManager.delay(500);
-        System.out.print(".\n");
+        System.out.print(TextColor.apply("\n" + label, Color.BRIGHT_BLACK));
+
+        for (int i = 0; i < 3; i++) {
+            UIManager.delay(500);
+            System.out.print(TextColor.apply(" .", Color.BRIGHT_BLACK));
+        }
+
+        System.out.println();
     }
 }

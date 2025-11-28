@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.jmpharmacyims.classes.TextColor.Color;
+
 import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.asciitable.CWC_LongestLine;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 
 public class AsciiTableBuilder {
@@ -101,31 +104,42 @@ public class AsciiTableBuilder {
 
     public static String buildSingleRow(String content) {
         AsciiTable at = new AsciiTable();
-
         at.addRule();
         at.addRow(content);
         at.addRule();
         at.setTextAlignment(TextAlignment.CENTER);
 
-        return at.render();
+        return TextColor.apply(at.render(), Color.WHITE);
     }
 
     public static String buildMedicineTable(List<Medicine> medicines) {
         AsciiTable asciiTable = new AsciiTable();
 
+        asciiTable.getRenderer().setCWC(new CWC_LongestLine());
+
         asciiTable.addRule();
-        asciiTable.addRow("Position #", "Name", "Price", "Amount", "Brand", "Expires At", "Purpose");
+
+        asciiTable.addRow("Position #", "Name", "Price", "Amount", "Brand", "Expires At", "Purpose")
+                .setTextAlignment(TextAlignment.CENTER);
+
         asciiTable.addRule();
 
         int indexCounter = 0;
         for (Medicine medicine : medicines) {
             asciiTable.addRow(
-                    indexCounter, medicine.getName(), medicine.getPrice(), medicine.getAmount(),
-                    medicine.getBrand(), medicine.getExpirationDate(), medicine.getPurpose()
+                    indexCounter,
+                    medicine.getName(),
+                    medicine.getPrice(),
+                    medicine.getAmount(),
+                    medicine.getBrand(),
+                    medicine.getExpirationDate(),
+                    medicine.getPurpose()
             );
             asciiTable.addRule();
             indexCounter++;
         }
+
+        asciiTable.setPadding(1);
 
         return asciiTable.render();
     }

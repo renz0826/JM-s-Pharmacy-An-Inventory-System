@@ -54,14 +54,12 @@ public class Customer extends Account {
             MessageLog.displayAll();
             System.out.println(TextColor.apply("\n[ Current Balance: Php " + getFunds() + " ]", Color.WHITE));
 
-            String instructions = """
-                    \nInstructions: 
-                    - Select medicine by entering its **position number**.
-                    - Search medicine by name.
-                    - Enter 'q' to exit
-                    """;
-            System.out.println(TextColor.apply(instructions, Color.LIGHT_YELLOW));
-            String input = InputHandler.readInput("Enter input: >> ");
+            System.out.println(TextColor.apply("\nInstructions: ", Color.WHITE));
+            System.out.println(TextColor.apply("- Search medicine by position number", Color.LIGHT_YELLOW));
+            System.out.println(TextColor.apply("- Search medicine by name", Color.LIGHT_YELLOW));
+            System.out.println(TextColor.apply("- Enter 'q' to exit.", Color.LIGHT_RED));
+
+            String input = InputHandler.readInput("\nEnter input: >> ");
 
             if (input.equalsIgnoreCase("q")) {
                 return;
@@ -96,13 +94,15 @@ public class Customer extends Account {
                         continue;
                     }
 
-                    System.out.println("\nConfirm purchase for Php " + totalCost + "? (y/n)");
-                    String confirmation = InputHandler.readInput("(y/n): ");
+                    String message = "Confirm purchase for Php " + totalCost + "? (y/n)";
+                    System.err.println();
+                    System.out.println(AsciiTableBuilder.buildSingleRow(message));
 
-                    if (confirmation.equalsIgnoreCase("y")) {
+                    if (InputHandler.promptYesOrNo()) {
 
                         // 1. Deduct funds
                         this.funds -= totalCost;
+                        UIManager.loading("Processing purchase");
 
                         // 2. Reduce Pharmacy Stock
                         targetPharmacy.updateMedicineAmount(selectedMedicine.getName(), -quantity);
@@ -194,7 +194,7 @@ public class Customer extends Account {
 
         MessageLog.displayNext();
 
-        System.out.println(TextColor.apply("\n[ Updated Balance: Php " + getFunds(), Color.WHITE) + " ]\n");
+        System.out.println(TextColor.apply("\n[ Updated Balance: Php " + getFunds(), Color.WHITE) + " ]");
 
         Database.save(this);
     }

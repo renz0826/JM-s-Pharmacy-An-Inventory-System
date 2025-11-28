@@ -6,16 +6,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jmpharmacyims.classes.TextColor.Color;
 
 public class Admin extends Account {
+
     private List<Customer> customers;
     private Pharmacy pharmacy;
-    
+
     @JsonCreator
     Admin(
-        @JsonProperty("name") String name,
-        @JsonProperty("username") String username,
-        @JsonProperty("password") String password) {
+            @JsonProperty("name") String name,
+            @JsonProperty("username") String username,
+            @JsonProperty("password") String password) {
         super(name, username, password);
 
         loadCustomers();
@@ -25,15 +27,16 @@ public class Admin extends Account {
     // CREATE
     // Method to create a new customer account
     public void addCustomerAccount() {
-        System.out.println(AsciiTableBuilder.buildSingleRow("+ Register A New Customer Account +"));
-        System.out.println("Enter Customer details.");
-        String name = InputHandler.readInput("Name >> ");
-        String username = InputHandler.readInput("Username >> ");
-        String password = InputHandler.readInput("Password >> ");
+        UIManager.displayTitle("+ Register A New Customer Account +");
+        System.out.println(TextColor.apply("\nEnter Customer details.", Color.LIGHT_YELLOW));
+        String name = InputHandler.readInput("\nName >> ");
+        String username = InputHandler.readInput("\nUsername >> ");
+        String password = InputHandler.readInput("\nPassword >> ");
         List<Medicine> medicines = List.of();
 
         Customer newCustomer = new Customer(name, username, password, medicines, 0);
         Database.createCustomer(newCustomer);
+        UIManager.loading("Registering customer");
         loadCustomers(); // refresh the list so the new accounts are included
     }
 
@@ -47,7 +50,9 @@ public class Admin extends Account {
             }
         }
 
-        if (matched.isEmpty()) return null;
+        if (matched.isEmpty()) {
+            return null;
+        }
         return matched;
     }
 
@@ -55,29 +60,32 @@ public class Admin extends Account {
     public void updateCustomerDetails(String targetName) {
         Customer customer = getCustomer(targetName);
 
-        System.out.println("Enter New Customer details.");
-        String name = InputHandler.readInput("Name >> ");
-        String username = InputHandler.readInput("Username >> ");
-        String password = InputHandler.readInput("Password >> ");
+        System.out.println(TextColor.apply("\nEnter New Customer details.", Color.LIGHT_YELLOW));
+        String username = InputHandler.readInput("\nUsername >> ");
+        String password = InputHandler.readInput("\nPassword >> ");
 
-        customer.setName(name);
         customer.setUsername(username);
         customer.setPassword(password);
 
         Database.save(customer);
+
+        UIManager.loading("Updating credentials");
+        MessageLog.addSuccess(targetName + "'s credentials has been successfully updated.");
     }
 
     public void updatePharmacyDetails() {
-        System.out.println("Enter New Pharmacy details.");
-        String name = InputHandler.readInput("Name >> ");
-        String username = InputHandler.readInput("Username >> ");
-        String password = InputHandler.readInput("Password >> ");
 
-        pharmacy.setName(name);
+        System.out.println(TextColor.apply("\nEnter New Pharmacy details.", Color.LIGHT_YELLOW));
+        String username = InputHandler.readInput("\nUsername >> ");
+        String password = InputHandler.readInput("\nPassword >> ");
+
         pharmacy.setUsername(username);
         pharmacy.setPassword(password);
 
         Database.save(pharmacy);
+
+        UIManager.loading("Updating credentials");
+        MessageLog.addSuccess(pharmacy.getName() + "'s credentials has been successfully updated.");
     }
 
     // DELETE
@@ -86,6 +94,9 @@ public class Admin extends Account {
         customers.remove(customer);
         Database.delete(customer);
         loadCustomers();
+
+        UIManager.loading("Deleting customer");
+        MessageLog.addSuccess(targetName + "'s account has been successfully deleted.");
     }
 
     // GETTERS

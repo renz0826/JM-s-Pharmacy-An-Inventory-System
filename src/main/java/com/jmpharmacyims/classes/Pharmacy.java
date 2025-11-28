@@ -8,15 +8,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jmpharmacyims.classes.TextColor.Color;
 
 public class Pharmacy extends Account {
+
     // Necessary initializations
     private List<Medicine> medicines;
 
     @JsonCreator
     Pharmacy(
-        @JsonProperty("name") String name, 
-        @JsonProperty("username") String username, 
-        @JsonProperty("password") String password,
-        @JsonProperty("medicines") List<Medicine> medicines
+            @JsonProperty("name") String name,
+            @JsonProperty("username") String username,
+            @JsonProperty("password") String password,
+            @JsonProperty("medicines") List<Medicine> medicines
     ) {
         super(name, username, password);
         this.medicines = medicines;
@@ -26,25 +27,32 @@ public class Pharmacy extends Account {
     public void addMedicine() {
         // Prompt line and Input validation
         UIManager.clearScreen();
-        System.out.println(AsciiTableBuilder.buildSingleRow("+ Add New Medicine +"));
-        System.out.println(TextColor.apply("Instructions: Enter medicine details.", Color.LIGHT_YELLOW));
-        String name = InputHandler.readInput("Name >> ");
-        double price = InputHandler.readDouble("Price (PHP) >> ");
-        int amount = InputHandler.readInt("Initial amount >> ");
-        String expirationDate = InputHandler.readMedicineDate("Expiration Date (d/m/yyyy) >> ");
-        String brand = InputHandler.readInput("Brand >> ");
-        String purpose = InputHandler.readInput("Purpose >> ");
+        UIManager.displayTitle("+ Add New Medicine +");
+        System.out.println(TextColor.apply("\nEnter medicine details.", Color.LIGHT_YELLOW));
+        String name = InputHandler.readInput("\nName >> ");
+        double price = InputHandler.readDouble("\nPrice (PHP) >> ");
+        int amount = InputHandler.readInt("\nInitial amount >> ");
+        String expirationDate = InputHandler.readMedicineDate("\nExpiration Date (d/m/yyyy) >> ");
+        String brand = InputHandler.readInput("\nBrand >> ");
+        String purpose = InputHandler.readInput("\nPurpose >> ");
 
         // Save sanitized inputs to database
         Medicine newMedicine = new Medicine(name, brand, purpose, expirationDate, amount, price);
         medicines.add(newMedicine);
         Database.save(this);
+
+        UIManager.loading("Adding medicine");
+        MessageLog.addSuccess(name + " has been successfully added to the inventory.\n");
+        MessageLog.displayNext();
     }
 
     /**
-     * Method to search for medicines that contains a matching substring from targetName 
+     * Method to search for medicines that contains a matching substring from
+     * targetName
+     *
      * @param targetName
-     * @return a list of medicines whose names contains the substring or null if none
+     * @return a list of medicines whose names contains the substring or null if
+     * none
      */
     public List<Medicine> searchMedicine(String targetName) {
         List<Medicine> matched = new ArrayList<>();
@@ -55,28 +63,39 @@ public class Pharmacy extends Account {
             }
         }
 
-        if (matched.isEmpty()) return null;
+        if (matched.isEmpty()) {
+            return null;
+        }
         return matched;
     }
-    
+
     // Method to update medicine amount
     public void updateMedicineAmount(String targetName, int amount) {
         Medicine medicine = getMedicine(targetName);
 
         // set to 0 if amount would fall under 0
         int result = medicine.getAmount() + amount;
-        if (result < 0) { medicine.setAmount(0); } 
-        else { medicine.setAmount(result); }
+        if (result < 0) {
+            medicine.setAmount(0);
+        } else {
+            medicine.setAmount(result);
+        }
         Database.save(this);
+
+        UIManager.loading("Updating medicine amount");
     }
 
     // Method to update medicine price
     public void updateMedicinePrice(String targetName, double amount) {
         Medicine medicine = getMedicine(targetName);
 
-        if (amount < 0) { medicine.setAmount(0); }
+        if (amount < 0) {
+            medicine.setAmount(0);
+        }
         medicine.setPrice(amount);
         Database.save(this);
+
+        UIManager.loading("Updating medicine price");
     }
 
     // Method to delete a medicine from list
@@ -84,6 +103,8 @@ public class Pharmacy extends Account {
         Medicine medicine = getMedicine(targetName);
         medicines.remove(medicine);
         Database.save(this);
+
+        UIManager.loading("Deleting medicine");
     }
 
     // Getters

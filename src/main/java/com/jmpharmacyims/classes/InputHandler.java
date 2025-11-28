@@ -228,7 +228,7 @@ public class InputHandler {
      */
     public static boolean promptYesOrNo() {
         do {
-            String confirmation = readInput("\n(y/n) >> ");
+            String confirmation = readInput("\nEnter choice (y/n) >> ");
             if (confirmation.equalsIgnoreCase("y")) {
                 return true;
             } else if (confirmation.equalsIgnoreCase("n")) {

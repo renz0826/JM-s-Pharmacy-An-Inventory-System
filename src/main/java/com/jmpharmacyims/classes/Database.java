@@ -137,8 +137,10 @@ public class Database {
         Path path = basePath.resolve(data.getName() + ".json");
 
         if (Files.exists(path)) {
-            MessageLog.addError(path + " already exists!");
+            MessageLog.addError(data.getName() + "'s account already exists!");
             return;
+        } else {
+            MessageLog.addSuccess(data.getName() + "'s account has been successfully registered.");
         }
 
         serialize(data, path);
