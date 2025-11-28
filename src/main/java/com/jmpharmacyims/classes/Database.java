@@ -5,6 +5,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +116,6 @@ public class Database {
     // Method to safely write changes to file
     private static void serialize(Account data, Path permanent) {
         try {
-            // System.out.println("path=" + permanent + " exists=" + Files.exists(permanent) + " isRegularFile=" + Files.isRegularFile(permanent));
             if (permanent.getParent() != null) {
                 Files.createDirectories(permanent.getParent());
             }
@@ -162,5 +163,115 @@ public class Database {
         }
 
         return customers;
+    }
+
+    /**
+     * Rebuilds missing directories and removes expired medicines from customers and pharmacy
+     */
+    public static void validateInitialDataFiles() {
+        rebuildMissingDirectories();
+        removeExpiredCustomerMedicines();
+        removeExpiredPharmacyMedicines();
+    }
+
+    /**
+     * Removes expired medicines from customers
+     */
+    private static void removeExpiredCustomerMedicines() {
+        List<Customer> customers = loadCustomers();
+        if (customers.isEmpty()) {
+            return;
+        }
+        
+        int counter = 0;
+        // Loop through each customer and get their medicines
+        for (Customer customer : customers) {
+            List<Medicine> medicines = customer.getMedicines();
+            List<Medicine> updatedMedicines = new ArrayList<>(); // For storing unexpired medicines
+
+            for (Medicine medicine : medicines) {
+                LocalDate today = LocalDate.now();
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("d/M/yyyy");
+
+                LocalDate medicineDate = LocalDate.parse(medicine.getExpirationDate(), format);
+
+                // Ignore medicines that are expired
+                if (medicineDate.isEqual(today) || medicineDate.isBefore(today)) {
+                    counter++;
+                    continue;
+                }
+
+                // Add unexpired medicine
+                updatedMedicines.add(medicine);
+            }
+
+            // Update customer medicines
+            customer.setMedicines(updatedMedicines);
+            save(customer);
+
+        }
+
+        if (counter > 0) {
+            MessageLog.logSuccess("Removed a total of " + counter + " expired medicines across customer accounts.");
+        }
+    }
+
+    private static void removeExpiredPharmacyMedicines() {
+        Pharmacy p = Database.load(pharmacyFilePath, Pharmacy.class);
+        if (p == null) { return; }
+
+        List<Medicine> medicines = p.getMedicines();
+        List<Medicine> updatedMedicines = new ArrayList<>();
+        int counter = 0;
+
+        for (Medicine medicine : medicines) {
+            LocalDate today = LocalDate.now();
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("d/M/yyyy");
+
+            LocalDate medicineDate = LocalDate.parse(medicine.getExpirationDate(), format);
+
+            // Ignore medicines that are expired
+            if (medicineDate.isEqual(today) || medicineDate.isBefore(today)) {
+                counter++;
+                continue;
+            }
+
+            // Add unexpired medicine
+            updatedMedicines.add(medicine);
+        }
+
+        // Update customer medicines
+        p.setMedicines(updatedMedicines);
+        save(p);
+
+        if (counter > 0) {
+            MessageLog.logSuccess("Removed a total of " + counter + " expired medicines from JmPharmacy.");
+        }
+    }
+
+    /**
+     * Rebuilds missing directories if they don't exist and logs messages
+     */
+    private static void rebuildMissingDirectories() {
+        try {
+            if (!Files.exists(customersDatabasePath)) {
+                Files.createDirectories(customersDatabasePath);
+                MessageLog.logSuccess("Rebuilt missing " + customersDatabasePath);
+            }
+            if (!Files.exists(adminFilePath)) {
+                Files.createDirectories(adminFilePath.getParent());
+                Files.createFile(adminFilePath);
+                serialize(new Admin("System Admin", "admin", "admin123"), adminFilePath);
+                MessageLog.logSuccess("Rebuilt missing " + adminFilePath);
+            }
+            if (!Files.exists(pharmacyFilePath)) {
+                Files.createDirectories(pharmacyFilePath.getParent());
+                Files.createFile(pharmacyFilePath);
+                serialize(new Pharmacy("JmPharmacy", "user", "password", new ArrayList<>()), pharmacyFilePath);
+                MessageLog.logSuccess("Rebuilt missing " + pharmacyFilePath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
