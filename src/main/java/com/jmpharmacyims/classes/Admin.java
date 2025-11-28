@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jmpharmacyims.classes.TextColor.Color;
 
 public class Admin extends Account {
 
+    @JsonIgnore
     private List<Customer> customers;
     private Pharmacy pharmacy;
 
