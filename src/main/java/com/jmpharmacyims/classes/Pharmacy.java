@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jmpharmacyims.classes.TextColor.Color;
 
-public class Pharmacy extends Account {
+public class Pharmacy extends Account implements CanEditCredentials {
 
     // Necessary initializations
     private List<Medicine> medicines;
@@ -123,15 +123,12 @@ public class Pharmacy extends Account {
         return null;
     }
 
-    // Setters
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
