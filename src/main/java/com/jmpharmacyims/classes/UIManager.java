@@ -13,7 +13,7 @@ import com.jmpharmacyims.classes.MenuOption.PharmacyOperation;
 import com.jmpharmacyims.classes.TextColor.Color;
 // UI class for design
 
-class UIManager { 
+class UIManager {
 
     public static void clearScreen() {
         try {
@@ -184,7 +184,7 @@ class UIManager {
                         UIManager.clearScreen();
                         // Display respective title
                         if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_AMOUNT) {
-                            UIManager.displayTitle("+ Update Medicine Amount +");
+                            UIManager.displayTitle("+ Restock Medicine +");
                         } else if (mainChoice == PharmacyOperation.UPDATE_MEDICINE_PRICE) {
                             UIManager.displayTitle("+ Update Medicine Price +");
                         } else {
@@ -244,13 +244,13 @@ class UIManager {
                             System.err.println();
                             System.out.println(AsciiTableBuilder.buildSingleRow(message));
 
-                            // 2. Prompt user choice
+                            // Prompt user choice
                             if (InputHandler.promptYesOrNo()) {
                                 pharmacy.deleteMedicine(targetName);
                                 MessageLog.logSuccess(targetName + " has been successfully deleted.");
                             }
 
-                            // 3. Update list
+                            // Update list
                             medicines = pharmacy.getMedicines();
                         }
                     } while (true);
@@ -497,7 +497,7 @@ class UIManager {
         String[][] items = {
             {"1", "Add Medicine"},
             {"2", "Show List of Medicines"},
-            {"3", "Update Medicine Amount"},
+            {"3", "Restock Medicine"},
             {"4", "Update Medicine Price"},
             {"5", "Delete Medicine"}
         };

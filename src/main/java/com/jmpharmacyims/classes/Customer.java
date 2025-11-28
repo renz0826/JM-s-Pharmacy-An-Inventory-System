@@ -36,7 +36,7 @@ public class Customer extends Account implements CanEditCredentials {
 
     // -----------------------------------------------------------
     public void buyMedicine() {
-        // 1. Check if Pharmacy can be loaded
+        // Check if Pharmacy can be loaded
         Pharmacy targetPharmacy = Database.load(Database.getPharmacyFilePath(), Pharmacy.class);
 
         if (targetPharmacy == null) {
@@ -45,7 +45,7 @@ public class Customer extends Account implements CanEditCredentials {
 
         List<Medicine> currentDisplayList = targetPharmacy.getMedicines();
         do {
-            // 3. Render the prompt table and start point of the operation
+            // Render the prompt table and start point of the operation
             UIManager.clearScreen();
             UIManager.displayPopUp("+ Buy Medicine +", "Which medicine would you like to buy?");
             UIManager.displayMedicineTable(currentDisplayList);
@@ -98,14 +98,14 @@ public class Customer extends Account implements CanEditCredentials {
 
                     if (InputHandler.promptYesOrNo()) {
 
-                        // 1. Deduct funds
+                        // Deduct funds
                         this.funds -= totalCost;
                         UIManager.loading("Processing purchase");
 
-                        // 2. Reduce Pharmacy Stock
+                        // Reduce Pharmacy Stock
                         targetPharmacy.updateMedicineAmount(selectedMedicine.getName(), -quantity);
 
-                        // 3. Update Customer Inventory
+                        // Update Customer Inventory
                         boolean alreadyHas = false;
                         for (Medicine m : this.medicines) {
                             if (m.getName().equalsIgnoreCase(selectedMedicine.getName())
@@ -129,7 +129,7 @@ public class Customer extends Account implements CanEditCredentials {
                             this.medicines.add(newMed);
                         }
 
-                        // 4. SAVE CUSTOMER (This uses getMedicines() to write the file)
+                        //SAVE CUSTOMER (This uses getMedicines() to write the file)
                         Database.save(this);
 
                         String unitsOf;
